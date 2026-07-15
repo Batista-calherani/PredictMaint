@@ -1,0 +1,56 @@
+services:
+  database:
+    build:
+      context: ./database
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-app_db}
+      MYSQL_USER: ${MYSQL_USER:-app_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-app_password}
+    ports:
+      - "${DATABASE_HOST_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PORT: ${BACKEND_PORT:-8080}
+      NODE_ENV: production
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      DB_HOST: ${DB_HOST:-database}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-app_password}
+      DB_NAME: ${DB_NAME:-app_db}
+    ports:
+      - "${BACKEND_HOST_PORT:-8080}:${BACKEND_PORT:-8080}"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      PORT: ${FRONTEND_PORT:-3000}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
+    ports:
+      - "${FRONTEND_HOST_PORT:-3000}:${FRONTEND_PORT:-3000}"
+
+volumes:
+  mysql-data:

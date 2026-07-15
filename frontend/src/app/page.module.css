@@ -1,0 +1,104 @@
+.page {
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  background: #f6f7f9;
+  color: #172033;
+  padding: 48px 24px;
+}
+
+.main {
+  display: flex;
+  width: 100%;
+  max-width: 960px;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.kicker {
+  color: #0f766e;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 720px;
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.hero p {
+  max-width: 640px;
+  color: #526070;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  gap: 16px;
+}
+
+.grid article {
+  display: flex;
+  min-height: 168px;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: space-between;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 20px;
+}
+
+.grid span {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.grid strong {
+  color: #111827;
+  font-size: 24px;
+}
+
+.grid p {
+  color: #526070;
+  line-height: 1.5;
+}
+
+.api {
+  color: #334155;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: 32px 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
