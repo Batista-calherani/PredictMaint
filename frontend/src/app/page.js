@@ -8,7 +8,7 @@ export default function Home() {
       <main className={styles.main}>
         <section className={styles.hero}>
           <p className={styles.kicker}>EXEMPLO ALTERAÇÂO</p>
-          <h1>Next.js, Express e MySQL</h1>
+          <h1>PredictMaint - Projeto Integrador</h1>
           <p>
             Base limpa para fork dos alunos, preparada para desenvolvimento
             local e deploy com Docker no Coolify.
