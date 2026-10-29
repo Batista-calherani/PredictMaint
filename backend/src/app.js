@@ -4,6 +4,8 @@ import helmet from "helmet";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 import healthRoutes from "./routes/healthRoutes.js";
+import maquinasRoutes from "./routes/maquinasRoutes.js";
+import usersRoutes from "./routes/userRoutes.js";
 
 const app = express();
 
@@ -20,6 +22,10 @@ app.get("/", (request, response) => {
     message: "API do projeto base",
   });
 });
+
+app.use("/api/users", usersRoutes);
+
+app.use("/api/maquinas", maquinasRoutes);
 
 app.use("/api/health", healthRoutes);
 
