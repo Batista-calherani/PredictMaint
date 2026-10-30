@@ -1,7 +1,9 @@
 import mysql from "mysql2/promise";
 import dotenv from 'dotenv';
 
-dotenv.config();
+//Normalmente o .env fica na raiz do projeto, não no src.
+//Por isso precisa mostrar o caminho para ele.
+dotenv.config({ path: './src/.env' });
 
 export const pool = mysql.createPool({
   host: process.env.DB_HOST,

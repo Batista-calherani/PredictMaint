@@ -1,5 +1,6 @@
 import { checkDatabaseConnection } from "../config/database.js";
 
+//HealthCheck é basicamente um teste de conexão
 export async function healthCheck(request, response, next) {
   try {
     const databaseConnected = await checkDatabaseConnection();
