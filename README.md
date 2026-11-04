@@ -165,9 +165,8 @@ npm run dev
 npm start
 ```
 
-Rotas iniciais:
+Rotas, login e permissoes: veja [`backend/README.md`](backend/README.md).
 
-- `GET /` retorna uma mensagem basica da API.
 - `GET /api/health` retorna status da API e testa a conexao com MySQL.
 
 Pastas padrao:
@@ -187,6 +186,9 @@ npm run build
 npm start
 npm run lint
 ```
+
+Com `NEXT_PUBLIC_API_URL` preenchido em `frontend/.env.local`, o front usa a API e o banco de verdade.
+Se a variavel ficar vazia, o front roda em modo demonstracao (dados de `src/lib/mock.jsx`, sem backend).
 
 O projeto esta sem Tailwind e sem Bootstrap por padrao. Cada aluno pode instalar e configurar a biblioteca CSS escolhida conforme a necessidade do projeto.
 

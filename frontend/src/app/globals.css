@@ -133,6 +133,7 @@ h1,h2,h3,h4,.h5,.h6{font-weight:700;letter-spacing:-.01em}
 .table th{font-size:.78rem;color:var(--pm-muted);font-weight:700;border-bottom:2px solid var(--pm-line)}
 .table td{vertical-align:middle}
 .pm-health{display:flex;align-items:center;gap:.6rem;min-width:150px}
+@media (max-width:575.98px){.pm-health{min-width:110px}}
 .pm-health .pm-bar{flex:1}
 .pm-mini{background:var(--pm-bg);border-radius:10px;padding:.7rem .9rem}
 .pm-mini b{display:block;font-size:1.3rem}
