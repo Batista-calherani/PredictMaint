@@ -110,15 +110,15 @@ BACKEND_PORT=8080
 FRONTEND_URL=http://localhost:3000
 NEXT_PUBLIC_API_URL=http://localhost:8080/api
 
-MYSQL_ROOT_PASSWORD=root_password
+MYSQL_ROOT_PASSWORD=senai@123
 MYSQL_DATABASE=app_db
 MYSQL_USER=app_user
-MYSQL_PASSWORD=app_password
+MYSQL_PASSWORD=senai@123
 
 DB_HOST=database
 DB_PORT=3306
 DB_USER=app_user
-DB_PASSWORD=app_password
+DB_PASSWORD=senai@123
 DB_NAME=app_db
 ```
 
@@ -144,7 +144,7 @@ FRONTEND_URL=http://localhost:3000
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=app_user
-DB_PASSWORD=app_password
+DB_PASSWORD=senai@123
 DB_NAME=app_db
 ```
 

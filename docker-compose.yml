@@ -4,10 +4,10 @@ services:
       context: ./database
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-senai@123}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-predictmaint}
       MYSQL_USER: ${MYSQL_USER:-app_user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-app_password}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-senai@123}
       TZ: ${TZ:-America/Sao_Paulo}
     volumes:
       - mysql-data:/var/lib/mysql
@@ -33,7 +33,7 @@ services:
       DB_HOST: ${DB_HOST:-database}
       DB_PORT: ${DB_PORT:-3306}
       DB_USER: ${DB_USER:-app_user}
-      DB_PASSWORD: ${DB_PASSWORD:-app_password}
+      DB_PASSWORD: ${DB_PASSWORD:-senai@123}
       DB_NAME: ${DB_NAME:-predictmaint}
       JWT_SECRET: ${JWT_SECRET:-troque-este-segredo-no-env}
       TZ: ${TZ:-America/Sao_Paulo}

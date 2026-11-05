@@ -20,6 +20,19 @@ docker compose up -d database
 **XAMPP / MySQL Workbench:** execute `01-schema.sql` e depois `02-seed.sql`.
 No `backend/.env`, use `DB_NAME=predictmaint`.
 
+## Acesso ao banco (desenvolvimento)
+
+| Usuário | Senha | Uso |
+| --- | --- | --- |
+| `root` | `senai@123` | Administração (DBeaver, Workbench) |
+| `app_user` | `senai@123` | Usado pela API |
+
+Host `localhost`, porta `3306`, banco `predictmaint`. No DBeaver, em *Propriedades do driver*,
+use `allowPublicKeyRetrieval=true` e `useSSL=false`.
+
+> Senha padronizada só para o ambiente de desenvolvimento da equipe. Na publicação (Coolify),
+> configure uma senha forte nas variáveis de ambiente.
+
 ## Logins de teste
 
 | E-mail | Matrícula | Senha | Perfis |
