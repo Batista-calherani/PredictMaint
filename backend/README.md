@@ -61,6 +61,10 @@ Os logins de teste estão em [`../database/README.md`](../database/README.md).
 
 "gestão" = perfis gestor e técnico. "gestor" = só gestor. "logado" = qualquer perfil.
 
+Níveis de acesso (chaves liga/desliga na tela Usuários): usam o mesmo `PUT /api/users/:id`
+com `perfis` ou `ativo`. A cada requisição a API confere se o usuário continua ativo **e** se
+ainda tem o perfil com que entrou; se perdeu, a sessão cai na hora (401).
+
 Proteções de usuários: o gestor não consegue desativar a si mesmo, nem tirar o próprio
 perfil de gestor, e o sistema nunca fica sem nenhum gestor ativo. Funcionário precisa de setor.
 

@@ -251,3 +251,21 @@ h1,h2,h3,h4,.h5,.h6{font-weight:700;letter-spacing:-.01em}
 .pm-b-perfil-gestor{background:#1b1e24;color:#ffcc14}
 .pm-b-perfil-tecnico{background:#dfe7f5;color:#1f3b6b}
 .pm-b-perfil-funcionario{background:var(--pm-gray-bg);color:#3b4252}
+
+/* Níveis de acesso: chaves liga/desliga */
+.pm-chave{display:flex;align-items:center;gap:1rem;border:1px solid var(--pm-line);border-left:4px solid #c3c7cf;border-radius:10px;padding:.75rem .9rem;background:#fff;transition:border-color .15s,background .15s}
+.pm-chave.on{border-left-color:#1e8e3e;background:#f3faf5}
+.pm-chave.travada{opacity:.75}
+.pm-chave label{cursor:pointer}
+.pm-chave-aviso{color:#8a5a00;font-weight:600}
+.pm-switch{display:flex;flex-direction:column;align-items:center;gap:.15rem;padding-left:0;min-width:74px}
+.pm-switch .form-check-input{float:none;margin:0;width:3.1em;height:1.6em;cursor:pointer}
+.pm-switch .form-check-input:checked{background-color:#1e8e3e;border-color:#1e8e3e}
+.pm-switch .form-check-input:focus{box-shadow:0 0 0 .2rem rgba(30,142,62,.25);border-color:#1e8e3e}
+.pm-switch .form-check-input:disabled{cursor:not-allowed}
+.pm-switch-txt{font-size:.72rem;font-weight:700;color:#5b6170;text-transform:uppercase;letter-spacing:.03em}
+.pm-chave.on .pm-switch-txt{color:#1e8e3e}
+.pm-chave-setor{border:1px dashed #d4a017;border-radius:10px;padding:.7rem .9rem;margin-top:.4rem;background:#fffbea}
+.pm-perfis-btn{border:0;background:transparent;padding:.25rem;border-radius:8px;cursor:pointer;text-align:left}
+.pm-perfis-btn:hover{background:#f3f4f8}
+.pm-perfis-btn:focus-visible{outline:3px solid var(--pm-yellow,#ffcc14)}

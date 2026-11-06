@@ -17,9 +17,16 @@ export async function autenticar(req, res, next) {
     return next(erro401("Sua sessão expirou. Entre de novo."));
   }
   try {
-    // Usuário desativado pelo gestor perde o acesso na hora, mesmo com o token ainda válido
-    const [rows] = await pool.query("SELECT ativo FROM usuarios WHERE id = ?", [req.usuario.id]);
+    // Usuário desativado, ou que perdeu o perfil com que entrou, perde o acesso na hora,
+    // mesmo com o token ainda válido (o gestor liga e desliga isso na tela Usuários)
+    const [rows] = await pool.query(
+      `SELECT u.ativo,
+              EXISTS(SELECT 1 FROM usuario_perfis p WHERE p.usuario_id = u.id AND p.perfil = ?) AS tem_perfil
+         FROM usuarios u WHERE u.id = ?`,
+      [req.usuario.perfil, req.usuario.id],
+    );
     if (!rows[0] || !rows[0].ativo) return next(erro401("Seu acesso foi desativado. Fale com o gestor."));
+    if (!rows[0].tem_perfil) return next(erro401("Seu nível de acesso mudou. Entre de novo."));
     next();
   } catch (e) {
     next(e);

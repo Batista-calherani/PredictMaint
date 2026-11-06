@@ -1,5 +1,6 @@
 'use client';
-/* Usuários (só gestor): cadastrar, listar, buscar, editar, desativar/reativar
+/* Usuários (só gestor): cadastrar, listar, buscar, editar, desativar/reativar,
+   ligar/desligar níveis de acesso (chaves liga/desliga)
    e mandar um alerta direto para a pessoa (ex.: urgência numa máquina). */
 import { useEffect, useState } from 'react';
 import Painel from '@/components/Painel';
@@ -85,6 +86,75 @@ function EnviarAlerta({ usuario, onClose }) {
   );
 }
 
+const NIVEIS = [
+  ['gestor', 'Gestor', 'Tudo do técnico e mais: cadastrar máquinas, abrir OS, limites dos alertas, orçamento, usuários e envio de alertas.'],
+  ['tecnico', 'Técnico', 'Dashboard, planta, máquinas, medições, reconhecer alertas e mudar o status das OS.'],
+  ['funcionario', 'Funcionário', 'Abrir chamados de manutenção e acompanhar os seus.'],
+];
+
+function Chave({ id, ligado, onChange, disabled, ocupado, titulo, texto, aviso }) {
+  return (
+    <div className={`pm-chave${ligado ? ' on' : ''}${disabled ? ' travada' : ''}`}>
+      <div className="flex-grow-1">
+        <label className="fw-bold d-block" htmlFor={id}>{titulo}</label>
+        <small className="text-secondary d-block">{texto}</small>
+        {aviso && <small className="d-block mt-1 pm-chave-aviso">{aviso}</small>}
+      </div>
+      <div className="form-check form-switch pm-switch m-0">
+        <input className="form-check-input" type="checkbox" role="switch" id={id} checked={ligado} disabled={disabled || ocupado} onChange={onChange} />
+        <span className="pm-switch-txt" aria-hidden="true">{ocupado ? '…' : ligado ? 'Ligado' : 'Desligado'}</span>
+      </div>
+    </div>
+  );
+}
+
+function Acessos({ usuario, setores, eu, onClose, onMudou }) {
+  const toast = useToast();
+  const [u, setU] = useState(usuario), [ocupado, setOcupado] = useState(''), [pedeSetor, setPedeSetor] = useState(false);
+  const souEu = eu && eu.email === u.email;
+  async function salvar(chave, dados, msg) {
+    setOcupado(chave);
+    try { const novo = await api.editarUsuario(u.id, dados); setU(novo); toast(msg); onMudou(); setPedeSetor(false); }
+    catch (e) { toast(e.message, 'danger'); } finally { setOcupado(''); }
+  }
+  function alterna(p, nome) {
+    const liga = !u.perfis.includes(p);
+    const perfis = liga ? [...u.perfis, p] : u.perfis.filter(x => x !== p);
+    if (!perfis.length) return toast('Deixe pelo menos um nível ligado. Para tirar todo o acesso, desligue "Acesso ao sistema".', 'danger');
+    if (liga && p === 'funcionario' && !u.setor) return setPedeSetor(true);
+    salvar(p, { perfis }, `${nome} ${liga ? 'ligado' : 'desligado'} para ${u.nome.split(' ')[0]}.`);
+  }
+  return (
+    <Modal titulo={`Níveis de acesso · ${u.nome}`} onClose={onClose} footer={<button className="btn btn-outline-dark" onClick={onClose}>Fechar</button>}>
+      <p className="text-secondary small">Cada chave vale na hora: quem estiver usando o sistema é desconectado do nível que perdeu.</p>
+      <Chave id="ac-ativo" titulo="Acesso ao sistema" ligado={u.ativo} ocupado={ocupado === 'ativo'} disabled={souEu}
+        texto="Desligado, a pessoa não consegue entrar. O histórico dela continua guardado."
+        aviso={souEu && 'Você não pode desligar o seu próprio acesso.'}
+        onChange={() => salvar('ativo', { ativo: !u.ativo }, `Acesso de ${u.nome.split(' ')[0]} ${u.ativo ? 'desligado' : 'ligado'}.`)} />
+      <h3 className="h6 mt-3 mb-2">Níveis</h3>
+      <div className="d-flex flex-column gap-2">
+        {NIVEIS.map(([p, nome, texto]) => {
+          const meuGestor = souEu && p === 'gestor';
+          return <div key={p}>
+            <Chave id={'ac-' + p} titulo={nome} texto={texto} ligado={u.perfis.includes(p)} ocupado={ocupado === p}
+              disabled={!u.ativo || meuGestor}
+              aviso={meuGestor ? 'Você não pode tirar o seu próprio acesso de gestor.' : !u.ativo && p === 'gestor' ? 'Ligue o acesso ao sistema para mudar os níveis.' : null}
+              onChange={() => alterna(p, nome)} />
+            {p === 'funcionario' && pedeSetor && <div className="pm-chave-setor">
+              <label className="form-label small fw-bold" htmlFor="ac-setor">Funcionário precisa de um setor. Escolha para ligar:</label>
+              <div className="d-flex gap-2">
+                <select className="form-select" id="ac-setor" defaultValue="" onChange={e => e.target.value && salvar('funcionario', { perfis: [...u.perfis, 'funcionario'], setor: e.target.value }, `Funcionário ligado para ${u.nome.split(' ')[0]}.`)}>
+                  <option value="">Escolha o setor</option>{setores.map(x => <option key={x}>{x}</option>)}</select>
+                <button className="btn btn-outline-dark" onClick={() => setPedeSetor(false)}>Cancelar</button>
+              </div>
+            </div>}
+          </div>;
+        })}
+      </div>
+    </Modal>
+  );
+}
+
 function Desativar({ usuario, onClose, onOk }) {
   const toast = useToast(), [indo, setIndo] = useState(false);
   async function confirmar() {
@@ -107,7 +177,7 @@ export default function Usuarios() {
   const l = useLoad(() => api.usuarios({ q, perfil, ativo: status }), [q, perfil, status]);
   const todos = useLoad(() => api.usuarios());
   const setores = useLoad(() => api.setores());
-  const [form, setForm] = useState(null), [alerta, setAlerta] = useState(null), [desativar, setDesativar] = useState(null);
+  const [form, setForm] = useState(null), [alerta, setAlerta] = useState(null), [desativar, setDesativar] = useState(null), [acessos, setAcessos] = useState(null);
   const eu = getUser();
   const recarregar = () => { l.recarregar(); todos.recarregar(); };
   async function reativar(u) {
@@ -127,11 +197,12 @@ export default function Usuarios() {
         <tbody>{lista.length ? lista.map(u => <tr key={u.id} className={u.ativo ? '' : 'pm-inativo'}>
           <td><b>{u.nome}</b>{eu && eu.email === u.email && <small className="text-secondary"> (você)</small>}<small className="d-block text-secondary">{u.email}</small></td>
           <td>{u.matricula}</td>
-          <td><div className="pm-perfis">{u.perfis.map(p => <Badge key={p} k={'perfil-' + p}>{NOME_PERFIL[p]}</Badge>)}</div></td>
+          <td><button type="button" className="pm-perfis pm-perfis-btn" title="Ligar ou desligar níveis de acesso" onClick={() => setAcessos(u)}>{u.perfis.map(p => <Badge key={p} k={'perfil-' + p}>{NOME_PERFIL[p]}</Badge>)}</button></td>
           <td>{u.setor || '—'}</td>
           <td>{u.ativo ? <Badge k="normal">Ativo</Badge> : <Badge k="info">Desativado</Badge>}</td>
           <td className="text-end"><div className="d-inline-flex flex-wrap justify-content-end gap-1">
             {u.ativo && <button className="btn btn-sm btn-primary" onClick={() => setAlerta(u)}>Enviar alerta</button>}
+            <button className="btn btn-sm btn-dark" onClick={() => setAcessos(u)}>Acessos</button>
             <button className="btn btn-sm btn-outline-dark" onClick={() => setForm(u)}>Editar</button>
             {u.ativo ? (eu && eu.email !== u.email && <button className="btn btn-sm btn-outline-danger" onClick={() => setDesativar(u)}>Desativar</button>)
               : <button className="btn btn-sm btn-outline-dark" onClick={() => reativar(u)}>Reativar</button>}
@@ -139,6 +210,7 @@ export default function Usuarios() {
           : <tr><td colSpan={6}><Vazio titulo="Ninguém encontrado" sub="Mude a busca ou os filtros, ou cadastre um novo usuário." /></td></tr>}</tbody></table></div>}</Carga></div>
       {form && <FormUsuario usuario={form === 'novo' ? null : form} setores={setores.data || []} onClose={() => setForm(null)} onOk={() => { setForm(null); recarregar(); }} />}
       {alerta && <EnviarAlerta usuario={alerta} onClose={() => setAlerta(null)} />}
+      {acessos && <Acessos usuario={acessos} setores={setores.data || []} eu={eu} onClose={() => setAcessos(null)} onMudou={recarregar} />}
       {desativar && <Desativar usuario={desativar} onClose={() => setDesativar(null)} onOk={() => { setDesativar(null); recarregar(); }} />}
     </Painel>
   );
