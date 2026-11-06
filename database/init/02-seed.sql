@@ -6,10 +6,10 @@
 --  As datas são relativas ao dia em que o script roda (@hoje),
 --  assim a demo nunca fica com tudo "vencido".
 --
---  Logins de teste (senha guardada com bcrypt):
---    admin@mantech.com.br       / Mantech@2026  (gestor, técnico, funcionário)
---    funcionario@mantech.com.br / Func@2026     (funcionário · Estamparia)
---    tecnico@mantech.com.br     / Tec@2026      (técnico)
+--  Logins de teste (senha guardada com bcrypt) — padrão da equipe: senai@123
+--    admin@mantech.com.br       (gestor, técnico, funcionário)
+--    funcionario@mantech.com.br (funcionário · Estamparia)
+--    tecnico@mantech.com.br     (técnico)
 -- ============================================================
 
 SET NAMES utf8mb4;
@@ -60,9 +60,9 @@ INSERT INTO setor_pecas_padrao (setor_id, peca_id, quantidade) VALUES
   (4, 12, 3);
 
 INSERT INTO usuarios (id, nome, email, matricula, senha_hash, setor_id) VALUES
-  (1, 'Administrador Mantech', 'admin@mantech.com.br',       'adm001', '$2b$10$MWMcN9d58TwZ.fiAIJ8l1OgZbIyaEiYZQ5f40/uet/ZNAKRs/zFNS', NULL),
-  (2, 'Ana Souza',             'funcionario@mantech.com.br', 'fun001', '$2b$10$m65VtuWZOldceutcfIOqsek.swtFNzdPbmrMYd9aPnTUGrYNgzGfi', 1),
-  (3, 'Carlos Lima',           'tecnico@mantech.com.br',     'tec001', '$2b$10$8p8lcJkNRgFSxvfB6kShkeZHDGvaG.BN6rLlD2bmtMupZSZEXT0Ea', NULL);
+  (1, 'Administrador Mantech', 'admin@mantech.com.br',       'adm001', '$2b$10$RDn46/1JlpY8lPETAIerHObj.G0LQgjBnFe5CrJLWO1welvMfpP6W', NULL),
+  (2, 'Ana Souza',             'funcionario@mantech.com.br', 'fun001', '$2b$10$RDn46/1JlpY8lPETAIerHObj.G0LQgjBnFe5CrJLWO1welvMfpP6W', 1),
+  (3, 'Carlos Lima',           'tecnico@mantech.com.br',     'tec001', '$2b$10$RDn46/1JlpY8lPETAIerHObj.G0LQgjBnFe5CrJLWO1welvMfpP6W', NULL);
 
 INSERT INTO usuario_perfis (usuario_id, perfil) VALUES
   (1, 'gestor'), (1, 'tecnico'), (1, 'funcionario'),

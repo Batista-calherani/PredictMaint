@@ -16,7 +16,7 @@ Teste rápido: abra `http://localhost:8080/api/health` — deve mostrar `"databa
 
 ## Login
 
-`POST /api/auth/login` com `{ "usuario": "admin@mantech.com.br", "senha": "Mantech@2026", "perfil": "gestor" }`
+`POST /api/auth/login` com `{ "usuario": "admin@mantech.com.br", "senha": "senai@123", "perfil": "gestor" }`
 devolve um `token`. As outras rotas exigem o cabeçalho `Authorization: Bearer <token>`.
 Os logins de teste estão em [`../database/README.md`](../database/README.md).
 

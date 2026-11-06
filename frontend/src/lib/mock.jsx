@@ -23,8 +23,8 @@ import { calcOrcamento } from './calc';
 
   /* Logins de DEMONSTRAÇÃO (somente no mock). Com a API real, a senha é validada no backend. */
   const USUARIOS = [
-    { nome: 'Administrador Mantech', email: 'admin@mantech.com.br', matricula: 'adm001', senha: 'Mantech@2026', perfis: ['gestor', 'tecnico', 'funcionario'] },
-    { nome: 'Ana Souza', email: 'funcionario@mantech.com.br', matricula: 'fun001', senha: 'Func@2026', perfis: ['funcionario'], setor: 'Estamparia' }
+    { nome: 'Administrador Mantech', email: 'admin@mantech.com.br', matricula: 'adm001', senha: 'senai@123', perfis: ['gestor', 'tecnico', 'funcionario'] },
+    { nome: 'Ana Souza', email: 'funcionario@mantech.com.br', matricula: 'fun001', senha: 'senai@123', perfis: ['funcionario'], setor: 'Estamparia' }
   ];
 
   function seed() {

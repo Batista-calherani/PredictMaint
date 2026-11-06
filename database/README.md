@@ -37,9 +37,9 @@ use `allowPublicKeyRetrieval=true` e `useSSL=false`.
 
 | E-mail | Matrícula | Senha | Perfis |
 | --- | --- | --- | --- |
-| admin@mantech.com.br | adm001 | Mantech@2026 | gestor, técnico, funcionário |
-| funcionario@mantech.com.br | fun001 | Func@2026 | funcionário (Estamparia) |
-| tecnico@mantech.com.br | tec001 | Tec@2026 | técnico |
+| admin@mantech.com.br | adm001 | senai@123 | gestor, técnico, funcionário |
+| funcionario@mantech.com.br | fun001 | senai@123 | funcionário (Estamparia) |
+| tecnico@mantech.com.br | tec001 | senai@123 | técnico |
 
 As senhas estão salvas com **bcrypt** (`senha_hash`). No login, o backend compara com
 `bcrypt.compare(senhaDigitada, usuario.senha_hash)` — nunca grave senha em texto puro.
