@@ -205,6 +205,8 @@ docker compose up -d database
 
 ## Deploy no Coolify
 
+Passo a passo completo da homologação (compose inteiro, domínios e variáveis): [`docs/DEPLOY-COOLIFY.md`](docs/DEPLOY-COOLIFY.md).
+
 Crie servicos separados apontando para os Dockerfiles:
 
 - Frontend: `frontend/Dockerfile`

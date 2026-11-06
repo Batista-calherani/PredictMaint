@@ -33,8 +33,8 @@ Os logins de teste estão em [`../database/README.md`](../database/README.md).
 | GET | `/api/planta/:codigo/preditivo` | gestão | Vida útil estimada e causas |
 | GET | `/api/maquinas` | logado | Lista (`?setor=&status=&ordem=saude\|codigo\|setor`) |
 | GET | `/api/maquinas/:codigo` | logado | Detalhe com medições e OS abertas |
-| POST | `/api/maquinas` | gestão | Cadastra (`id`, `nome`, `setor`, `prox`, `custoParada`) |
-| PUT | `/api/maquinas/:codigo` | gestão | Atualiza campos enviados |
+| POST | `/api/maquinas` | gestor | Cadastra (`id`, `nome`, `setor`, `prox`, `custoParada`) |
+| PUT | `/api/maquinas/:codigo` | gestor | Atualiza campos enviados |
 | DELETE | `/api/maquinas/:codigo` | gestor | Desativa (mantém histórico) |
 | GET | `/api/medicoes` · `/api/medicoes/serie` | gestão | Últimas leituras / série do gráfico |
 | POST | `/api/medicoes` | gestão | Registra leitura; acima do limite abre alerta |
@@ -42,16 +42,33 @@ Os logins de teste estão em [`../database/README.md`](../database/README.md).
 | PATCH | `/api/alertas/:id/reconhecer` | gestão | Marca como reconhecido |
 | GET · PUT | `/api/limites` | gestão · gestor | Limites de vibração, temperatura e corrente |
 | GET | `/api/ordens` | gestão | Quadro de OS (`?equipe=&prioridade=&periodo=30`) |
-| POST | `/api/ordens` | gestão | Cria OS |
-| PATCH | `/api/ordens/:codigo` | gestão | Muda status, prioridade, equipe, prazo… |
-| GET | `/api/orcamento/base/:codigo` · `/api/orcamento/resumo` | gestão | Parâmetros e comparativo |
-| GET · POST | `/api/orcamento` | gestão | Orçamentos salvos |
+| POST | `/api/ordens` | gestor | Cria OS (também pelo "Gerar OS" do alerta) |
+| PATCH | `/api/ordens/:codigo` | gestão | Gestor muda tudo; técnico só o `status` |
+| GET | `/api/orcamento/base/:codigo` · `/api/orcamento/resumo` | gestor | Parâmetros e comparativo |
+| GET · POST | `/api/orcamento` | gestor | Orçamentos salvos |
 | GET | `/api/chamados` | logado | Funcionário vê os seus; gestão vê todos |
 | POST | `/api/chamados` | logado | Abre chamado (JSON ou com foto) e já cria a OS |
 | POST | `/api/chamados/:codigo/comentarios` | logado | Comenta |
-| GET · POST · PUT · DELETE | `/api/users` | gestor | Cadastro de usuários |
+| GET | `/api/setores` | logado | Lista de setores (formulários) |
+| GET | `/api/users` | gestor | Lista (`?q=` busca nome/e-mail/matrícula, `?perfil=`, `?ativo=1\|0`) |
+| POST | `/api/users` | gestor | Cadastra (`nome`, `email`, `matricula`, `senha`, `perfis[]`, `setor`) |
+| PUT | `/api/users/:id` | gestor | Edita dados, perfis, senha ou reativa (`ativo: true`) |
+| DELETE | `/api/users/:id` | gestor | Desativa (mantém o histórico; o acesso cai na hora) |
+| GET | `/api/notificacoes` | logado | Caixa de avisos de quem está logado (`naoLidas`, `itens`) |
+| PATCH | `/api/notificacoes/:id/lida` · `/api/notificacoes/lidas` | logado | Marca um aviso (ou todos) como lido |
+| POST | `/api/notificacoes` | gestor | Envia aviso (`destinatario`, `maquina`, `prioridade`, `titulo`, `mensagem`) |
+| GET | `/api/notificacoes/enviadas` | gestor | Avisos enviados (`?usuario=`) |
 
-"gestão" = perfis gestor e técnico.
+"gestão" = perfis gestor e técnico. "gestor" = só gestor. "logado" = qualquer perfil.
+
+Proteções de usuários: o gestor não consegue desativar a si mesmo, nem tirar o próprio
+perfil de gestor, e o sistema nunca fica sem nenhum gestor ativo. Funcionário precisa de setor.
+
+## Atualização automática do banco
+
+Ao iniciar, a API roda `src/config/migracoes.js`, que cria o que faltar no banco
+(ex.: a tabela `notificacoes`) sem apagar nada. Assim um banco que já existia
+(no Coolify ou no PC de alguém da equipe) recebe as novidades só reiniciando a API.
 
 ## Como as coisas se conectam
 

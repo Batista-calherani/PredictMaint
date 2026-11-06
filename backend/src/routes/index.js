@@ -1,9 +1,9 @@
 /* Todas as rotas da API, no mesmo formato de frontend/src/lib/api.jsx.
    Quem pode usar cada rota:
      livre        -> login, recuperar senha, health
-     logado       -> qualquer perfil
-     gestão       -> gestor e técnico
-     gestor       -> só gestor */
+     logado       -> qualquer perfil (gestor, técnico e funcionário)
+     gestão       -> gestor e técnico (consultar e operar o dia a dia)
+     gestor       -> só gestor (cadastros, custos, limites, usuários e avisos) */
 import { Router } from "express";
 
 import * as alertas from "../controllers/alertasController.js";
@@ -12,6 +12,7 @@ import * as chamados from "../controllers/chamadosController.js";
 import { healthCheck } from "../controllers/healthController.js";
 import * as maquinas from "../controllers/maquinasController.js";
 import * as medicoes from "../controllers/medicoesController.js";
+import * as notificacoes from "../controllers/notificacoesController.js";
 import * as orcamento from "../controllers/orcamentoController.js";
 import * as ordens from "../controllers/ordensController.js";
 import * as painel from "../controllers/painelController.js";
@@ -34,8 +35,8 @@ r.use(autenticar);
 // Máquinas (o funcionário também lista, para abrir chamado)
 r.get("/maquinas", maquinas.getMaquinas);
 r.get("/maquinas/:id", maquinas.getMaquina);
-r.post("/maquinas", gestao, maquinas.createMaquina);
-r.put("/maquinas/:id", gestao, maquinas.updateMaquina);
+r.post("/maquinas", gestor, maquinas.createMaquina);
+r.put("/maquinas/:id", gestor, maquinas.updateMaquina);
 r.delete("/maquinas/:id", gestor, maquinas.deleteMaquina);
 
 // Alertas (o funcionário vê os do setor dele na tela de chamado)
@@ -61,13 +62,23 @@ r.get("/medicoes/serie", gestao, medicoes.getSerie);
 r.post("/medicoes", gestao, medicoes.createMedicao);
 
 r.get("/ordens", gestao, ordens.getOrdens);
-r.post("/ordens", gestao, ordens.createOrdem);
+r.post("/ordens", gestor, ordens.createOrdem);
 r.patch("/ordens/:id", gestao, ordens.updateOrdem);
 
-r.get("/orcamento/base/:id", gestao, orcamento.getBase);
-r.get("/orcamento/resumo", gestao, orcamento.getResumo);
-r.get("/orcamento", gestao, orcamento.getOrcamentos);
-r.post("/orcamento", gestao, orcamento.salvarOrcamento);
+r.get("/orcamento/base/:id", gestor, orcamento.getBase);
+r.get("/orcamento/resumo", gestor, orcamento.getResumo);
+r.get("/orcamento", gestor, orcamento.getOrcamentos);
+r.post("/orcamento", gestor, orcamento.salvarOrcamento);
+
+// Setores (formulários de usuário e chamado)
+r.get("/setores", painel.setores);
+
+// Notificações: cada um lê as suas; só o gestor envia
+r.get("/notificacoes", notificacoes.minhas);
+r.patch("/notificacoes/lidas", notificacoes.marcarLida);
+r.patch("/notificacoes/:id/lida", notificacoes.marcarLida);
+r.get("/notificacoes/enviadas", gestor, notificacoes.enviadas);
+r.post("/notificacoes", gestor, notificacoes.enviar);
 
 // Usuários
 r.get("/users", gestor, users.getUsers);

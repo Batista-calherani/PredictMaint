@@ -39,6 +39,12 @@ services:
       TZ: ${TZ:-America/Sao_Paulo}
     volumes:
       - uploads:/app/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:$${PORT:-8080}/api/health >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
     expose:
       - "${BACKEND_PORT:-8080}"
 

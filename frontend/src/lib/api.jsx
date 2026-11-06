@@ -55,5 +55,15 @@ export const api = {
   salvarOrcamento: d => req('POST', '/orcamento', d),
   chamados: () => req('GET', '/chamados'),
   criarChamado: d => req('POST', '/chamados', d),
-  comentarChamado: (id, texto) => req('POST', `/chamados/${id}/comentarios`, { texto })
+  comentarChamado: (id, texto) => req('POST', `/chamados/${id}/comentarios`, { texto }),
+  setores: () => req('GET', '/setores'),
+  usuarios: p => req('GET', '/users' + q(p)),
+  criarUsuario: d => req('POST', '/users', d),
+  editarUsuario: (id, d) => req('PUT', '/users/' + id, d),
+  desativarUsuario: id => req('DELETE', '/users/' + id),
+  notificacoes: () => req('GET', '/notificacoes'),
+  marcarLida: id => req('PATCH', `/notificacoes/${id}/lida`),
+  marcarTodasLidas: () => req('PATCH', '/notificacoes/lidas'),
+  enviarNotificacao: d => req('POST', '/notificacoes', d),
+  notificacoesEnviadas: usuario => req('GET', '/notificacoes/enviadas' + q({ usuario }))
 };
