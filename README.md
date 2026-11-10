@@ -12,6 +12,12 @@ sobe banco + API + site no Docker, cria os atalhos "Iniciar/Parar PredictMaint",
 "PredictMaint (Docker)" no DBeaver e abre o projeto no VS Code. Todas as senhas: `senai@123`.
 Detalhes e solução de problemas: [`instalador/LEIA-ME.txt`](instalador/LEIA-ME.txt).
 
+## Testes automatizados
+
+180 testes (157 da API + 23 de tela, no computador e no celular) em [`testes/`](testes/).
+Com o sistema ligado, dê dois cliques em `testes/Rodar-Testes.bat` (ou no atalho **Testar PredictMaint**).
+O que cada um confere: [`testes/LEIA-ME.md`](testes/LEIA-ME.md).
+
 ## Stack Padrao
 
 - Frontend: Next.js `16.2.10` com JavaScript, sem Tailwind e sem Bootstrap por padrao.

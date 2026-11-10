@@ -328,7 +328,9 @@ pause
 "@
 [IO.File]::WriteAllText((Join-Path $desktop 'Iniciar PredictMaint.bat'), ($iniciar -replace "`r?`n", "`r`n"))
 [IO.File]::WriteAllText((Join-Path $desktop 'Parar PredictMaint.bat'),   ($parar   -replace "`r?`n", "`r`n"))
-Ok "Atalhos 'Iniciar PredictMaint' e 'Parar PredictMaint' na Area de Trabalho"
+$testar = "@echo off`r`ncall `"$PROJETO\testes\Rodar-Testes.bat`"`r`n"
+if (Test-Path (Join-Path $PROJETO 'testes\Rodar-Testes.bat')) { [IO.File]::WriteAllText((Join-Path $desktop 'Testar PredictMaint.bat'), $testar) }
+Ok "Atalhos 'Iniciar', 'Parar' e 'Testar PredictMaint' na Area de Trabalho"
 
 $sqlTeste = $null
 # Consultas de teste: usa a do projeto (sempre a mais nova); se nao tiver, a que veio com o instalador
