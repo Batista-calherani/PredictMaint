@@ -5,7 +5,7 @@ Duas baterias que conferem o sistema inteiro sozinhas:
 | Bateria | Ferramenta | O que confere | Quantidade |
 | --- | --- | --- | --- |
 | **API** (`api/`) | `node:test` (já vem no Node) | Cada rota, cada validação e a tabela de acessos dos 3 perfis | 157 testes |
-| **Telas** (`telas/`) | Playwright | Um navegador robô usa o sistema como uma pessoa, no computador e no celular | 23 testes |
+| **Telas** (`telas/`) | Playwright | Um navegador robô usa o sistema como uma pessoa, no computador e no celular | 24 testes |
 
 ## Como rodar (Windows)
 
@@ -33,7 +33,7 @@ Pelo terminal, dentro desta pasta: `npm install`, depois `npm run api`, `npm run
 **Telas**
 - Login dos 3 perfis, senha errada, sair.
 - Gestor vê e abre todas as telas sem erro; técnico sem Orçamento/Usuários e sem botões de cadastro; endereço digitado à mão é barrado; funcionário só na área de chamados.
-- Técnico registra medição e move OS; funcionário abre chamado e acompanha.
+- Técnico registra medição e move OS; funcionário abre chamado e acompanha; chamado com foto de 18 MB (o site reduz antes de enviar) e a foto aparece para o funcionário e na OS do gestor.
 - Usuários: cadastrar, buscar, filtrar, chaves de acesso, alerta urgente chegando no sininho do técnico, desativar.
 - Celular: todas as telas cabem na tela, sem rolagem para o lado.
 

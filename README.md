@@ -14,7 +14,7 @@ Detalhes e solução de problemas: [`instalador/LEIA-ME.txt`](instalador/LEIA-ME
 
 ## Testes automatizados
 
-180 testes (157 da API + 23 de tela, no computador e no celular) em [`testes/`](testes/).
+181 testes (157 da API + 24 de tela, no computador e no celular) em [`testes/`](testes/).
 Com o sistema ligado, dê dois cliques em `testes/Rodar-Testes.bat` (ou no atalho **Testar PredictMaint**).
 O que cada um confere: [`testes/LEIA-ME.md`](testes/LEIA-ME.md).
 

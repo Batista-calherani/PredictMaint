@@ -38,6 +38,15 @@ test("abre chamado com foto", async () => {
   const r = await post("/chamados", { token: T.funcionario, form });
   status(r, 201, "chamado com foto");
   assert.match(r.body.foto || "", /^\/uploads\//, "a foto não foi salva");
+  // a foto pode ser aberta pelo endereço da API
+  const origem = (process.env.API_URL || "http://localhost:8080/api").replace(/\/api\/?$/, "");
+  const img = await fetch(origem + r.body.foto);
+  assert.equal(img.status, 200, "a foto não abre pelo endereço");
+  assert.match(img.headers.get("content-type") || "", /^image\//);
+  // a OS criada pelo chamado leva a mesma foto (gestor e técnico veem)
+  const os = (await get("/ordens", { token: T.gestor })).body.find((o) => o.chamado === r.body.id);
+  assert.ok(os, "não achei a OS do chamado com foto");
+  assert.equal(os.foto, r.body.foto, "a OS não trouxe a foto do chamado");
 });
 
 test("recusa foto que não é imagem", async () => {

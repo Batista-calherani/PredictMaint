@@ -10,6 +10,14 @@ import { mock } from './mock';
 const BASE = (process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE || '').replace(/\/+$/, '');
 export const modoDemo = !BASE;
 
+// Fotos e arquivos enviados ficam na API em /uploads/...: monta o endereço completo.
+// Ex.: BASE http://localhost:8080/api + /uploads/x.jpg -> http://localhost:8080/uploads/x.jpg
+export function urlArquivo(caminho) {
+  if (!caminho) return null;
+  if (/^(https?:|data:|blob:)/.test(caminho)) return caminho;
+  return BASE.replace(/\/api$/, '') + caminho;
+}
+
 async function req(method, path, body) {
   if (!BASE) return mock(method, path, body);
   const headers = {};

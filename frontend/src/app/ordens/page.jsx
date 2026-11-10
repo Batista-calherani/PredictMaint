@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Painel from '@/components/Painel';
 import { Badge, Carga, Modal, useLoad, useToast } from '@/components/ui';
-import { api } from '@/lib/api';
+import { api, urlArquivo } from '@/lib/api';
 import { EQUIPES, STATUS_OS, param } from '@/lib/util';
 
 const COLS = ['aberta', 'andamento', 'peca', 'concluida'];
@@ -52,6 +52,7 @@ export default function Ordens() {
         </div></div>); })}</div>}</Carga>
       {o && <Modal titulo={<>{o.id} <Badge k={o.prioridade} /></>} onClose={() => setDet(null)} footer={<button className="btn btn-primary" onClick={async () => { await mover(o.id, novoSt || o.status); setDet(null); }}>Atualizar status</button>}>
         <h3 className="h5">{o.titulo}</h3><p className="text-secondary">{o.ativo} · Equipe {o.equipe} · Prazo {o.prazo}{o.vencida && <b className="text-danger"> (vencido)</b>}</p>{o.descricao && <p>{o.descricao}</p>}
+        {o.foto && <a className="pm-foto d-block mb-3" href={urlArquivo(o.foto)} target="_blank" rel="noreferrer"><img src={urlArquivo(o.foto)} alt={`Foto do chamado ${o.chamado || ''}`} loading="lazy" /><small>Foto enviada no chamado {o.chamado} · abrir em tamanho real</small></a>}
         <label className="form-label" htmlFor="o-s">Status</label><select id="o-s" className="form-select" value={novoSt || o.status} onChange={e => setNovoSt(e.target.value)}>{COLS.map(s => <option key={s} value={s}>{STATUS_OS[s]}</option>)}</select></Modal>}
       {nova && maqs.data && <NovaOS maqs={maqs.data} onClose={() => setNova(false)} onOk={() => { setNova(false); l.recarregar(); }} />}
     </Painel>

@@ -285,8 +285,10 @@ import { calcOrcamento } from './calc';
   };
   on('GET', '/chamados', () => db.chamados.map(chOut));
   on('POST', '/chamados', (_, __, b) => {
+    let foto = null;
+    if (typeof FormData !== 'undefined' && b instanceof FormData) { const arq = b.get('foto'); foto = arq ? URL.createObjectURL(arq) : null; b = JSON.parse(b.get('dados') || '{}'); }
     if (!b.maquina || !b.descricao) throw new Error('Escolha a máquina e descreva o que está acontecendo.');
-    const d = new Date(), c = { id: 'CH-' + (++db.seqCH), maquina: b.maquina, problema: b.problema || 'Outro', urgencia: b.urgencia, situacao: 'Registrado', aberto: dm(d) + ' ' + hm(d), setor: b.setor || 'Estamparia', descricao: b.descricao, comentarios: [], eventos: {} };
+    const d = new Date(), c = { id: 'CH-' + (++db.seqCH), maquina: b.maquina, problema: b.problema || 'Outro', urgencia: b.urgencia, situacao: 'Registrado', aberto: dm(d) + ' ' + hm(d), setor: b.setor || 'Estamparia', descricao: b.descricao, foto, comentarios: [], eventos: {} };
     db.chamados.unshift(c); save(); return chOut(c);
   });
   on('POST', '/chamados/:id/comentarios', ([id], _, b) => { const c = db.chamados.find(x => x.id === id); if (!c) throw new Error('Chamado não encontrado.'); const d = new Date(); c.comentarios.push({ quando: dm(d) + ' ' + hm(d), texto: b.texto }); save(); return chOut(c); });

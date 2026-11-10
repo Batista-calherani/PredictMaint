@@ -36,3 +36,22 @@ export async function semRolagemLateral(page) {
   const sobra = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(sobra, "a página está mais larga que a tela").toBeLessThanOrEqual(1);
 }
+
+// Gera uma "foto" BMP grande (3000x2000, ~18 MB), maior que o limite de 5 MB do servidor,
+// para conferir que o site reduz a foto antes de enviar.
+export function fotoGrande() {
+  const w = 3000, h = 2000, linha = w * 3, tam = 54 + linha * h;
+  const b = Buffer.alloc(tam);
+  b.write("BM", 0); b.writeUInt32LE(tam, 2); b.writeUInt32LE(54, 10); b.writeUInt32LE(40, 14);
+  b.writeInt32LE(w, 18); b.writeInt32LE(h, 22); b.writeUInt16LE(1, 26); b.writeUInt16LE(24, 28);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = 54 + y * linha + x * 3;
+    b[i] = (x * 255 / w) | 0; b[i + 1] = (y * 255 / h) | 0; b[i + 2] = 120;
+  }
+  return { name: "foto-celular.bmp", mimeType: "image/bmp", buffer: b };
+}
+
+// A imagem carregou de verdade (não está quebrada)
+export async function imagemCarregou(img) {
+  await expect.poll(() => img.evaluate((el) => el.complete && el.naturalWidth > 0)).toBe(true);
+}
