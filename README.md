@@ -2,6 +2,16 @@
 
 Template para alunos criarem forks com a mesma stack de frontend, backend e banco de dados.
 
+## Configurar o ambiente num PC novo (Windows)
+
+1. Baixe a pasta [`instalador/`](instalador/) (ou o zip que a equipe compartilha).
+2. Dê dois cliques em `Configurar-Ambiente-PredictMaint.bat`.
+
+Ele instala o que faltar (Git, Docker Desktop, VS Code, DBeaver e Node.js), baixa esta branch,
+sobe banco + API + site no Docker, cria os atalhos "Iniciar/Parar PredictMaint", a conexão
+"PredictMaint (Docker)" no DBeaver e abre o projeto no VS Code. Todas as senhas: `senai@123`.
+Detalhes e solução de problemas: [`instalador/LEIA-ME.txt`](instalador/LEIA-ME.txt).
+
 ## Stack Padrao
 
 - Frontend: Next.js `16.2.10` com JavaScript, sem Tailwind e sem Bootstrap por padrao.
