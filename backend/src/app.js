@@ -8,9 +8,6 @@ import rotas from "./routes/index.js";
 
 const app = express();
 
-// Atrás do proxy do Coolify/Traefik: confia no cabeçalho X-Forwarded-* do primeiro proxy
-app.set("trust proxy", 1);
-
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } })); // libera as fotos para o front
 app.use(
   cors({

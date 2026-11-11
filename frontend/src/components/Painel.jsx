@@ -5,10 +5,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { getUser, saudacao } from '@/lib/util';
 import { Modal } from '@/components/ui';
-import Sino from '@/components/Sino';
 
-/* Menu por perfil: o técnico opera o dia a dia; custos e cadastros de pessoas são do gestor. */
-const NAV = [['/dashboard', 'Dashboard'], ['/planta', 'Planta ao vivo'], ['/maquinas', 'Máquinas'], ['/medicoes', 'Medições'], ['/alertas', 'Alertas'], ['/ordens', 'Ordens de Serviço'], ['/orcamento', 'Orçamento manutenciário', 'gestor'], ['/usuarios', 'Usuários', 'gestor']];
+const NAV = [['/dashboard', 'Dashboard'], ['/planta', 'Planta ao vivo'], ['/maquinas', 'Máquinas'], ['/medicoes', 'Medições'], ['/alertas', 'Alertas'], ['/ordens', 'Ordens de Serviço'], ['/orcamento', 'Orçamento manutenciário']];
 const PERFIL = { gestor: 'Gestor', tecnico: 'Técnico', funcionario: 'Funcionário' };
 
 /* Guarda de rota: sem login volta para "/", e cada perfil só entra na sua área. */
@@ -41,24 +39,19 @@ function Busca() {
   );
 }
 
-/* soGestor: a tela inteira é do gestor (o técnico volta para o dashboard).
-   acao.soGestor: o botão do topo só aparece para o gestor. */
-export default function Painel({ titulo, acao, soGestor = false, children }) {
+export default function Painel({ titulo, acao, children }) {
   const u = useSessao('gestor'), path = usePathname(), router = useRouter();
-  const bloqueado = !!u && soGestor && u.perfil !== 'gestor';
-  useEffect(() => { if (bloqueado) router.replace('/dashboard'); }, [bloqueado, router]);
   const [aberto, setAberto] = useState(false), [pulso, setPulso] = useState(null);
   useEffect(() => { setAberto(false); }, [path]);
   useEffect(() => { if (u) api.resumoPlanta().then(setPulso).catch(() => setPulso(false)); }, [u]);
-  if (!u || bloqueado) return null;
-  const botao = acao && (!acao.soGestor || u.perfil === 'gestor') ? acao : null;
+  if (!u) return null;
   return (
     <div className="pm-shell">
       {aberto && <div className="pm-scrim" onClick={() => setAberto(false)} />}
       <aside className={`pm-side${aberto ? ' aberto' : ''}`} aria-label="Menu principal">
         <Link href="/dashboard"><img className="pm-logo" src="/mantech-logo.png" alt="Mantech" /></Link>
         <nav className="pm-nav" aria-label="Seções">
-          {NAV.filter(([, , p]) => !p || p === u.perfil).map(([h, t]) => <Link key={h} href={h} className={path === h ? 'active' : ''} aria-current={path === h ? 'page' : undefined}>{t}</Link>)}
+          {NAV.map(([h, t]) => <Link key={h} href={h} className={path === h ? 'active' : ''} aria-current={path === h ? 'page' : undefined}>{t}</Link>)}
         </nav>
         <div className="pm-pulse">
           <svg viewBox="0 0 200 30" preserveAspectRatio="none" aria-hidden="true"><path d="M0 16H62L70 4L80 27L88 13H118L126 6L134 22L140 16H200" /></svg>
@@ -72,8 +65,7 @@ export default function Painel({ titulo, acao, soGestor = false, children }) {
           <button className="btn btn-outline-dark d-lg-none" aria-label="Abrir menu" onClick={() => setAberto(true)}>☰</button>
           <h1>{titulo}</h1>
           <Busca />
-          <Sino />
-          {botao && (botao.href ? <Link className="btn btn-primary" href={botao.href}>{botao.label}</Link> : <button className="btn btn-primary" onClick={botao.onClick}>{botao.label}</button>)}
+          {acao && (acao.href ? <Link className="btn btn-primary" href={acao.href}>{acao.label}</Link> : <button className="btn btn-primary" onClick={acao.onClick}>{acao.label}</button>)}
         </header>
         <main className="pm-content">{typeof children === 'function' ? children(u) : children}</main>
       </div>
@@ -96,15 +88,13 @@ export function AreaFuncionario({ children }) {
     <>
       <nav className="navbar navbar-expand-md pm-topnav" data-bs-theme="dark"><div className="container-xl">
         <Link className="navbar-brand" href="/chamado"><img src="/mantech-logo.png" alt="Mantech" style={{ height: 30 }} /></Link>
-        <div className="ms-auto me-2 d-md-none"><Sino claro linkMaquina={false} /></div>
         <button className="navbar-toggler" aria-label="Abrir menu" onClick={() => setMenu(!menu)}><span className="navbar-toggler-icon" /></button>
         <div className={`collapse navbar-collapse${menu ? ' show' : ''}`}>
           <ul className="navbar-nav me-auto gap-1">
             {L.map(([h, t]) => <li key={h} className="nav-item"><Link className={`nav-link${path === h ? ' active' : ''}`} href={h}>{t}</Link></li>)}
             <li className="nav-item"><a className="nav-link" href="#" onClick={e => { e.preventDefault(); setAjuda(true); }}>Ajuda</a></li>
           </ul>
-          <div className="d-none d-md-flex align-items-center gap-2"><Sino claro linkMaquina={false} /></div>
-          <div className="dropdown ms-md-2">
+          <div className="dropdown">
             <button className="btn btn-outline-light rounded-pill" onClick={() => setDrop(!drop)}>Funcionário · {u.setor}</button>
             <ul className={`dropdown-menu dropdown-menu-end${drop ? ' show' : ''}`}><li><span className="dropdown-item-text">{u.nome}</span></li><li><button className="dropdown-item" onClick={() => sair(router)}>Sair</button></li></ul>
           </div>

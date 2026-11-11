@@ -24,7 +24,7 @@ SELECT DATABASE() AS banco, VERSION() AS versao_mysql, NOW() AS agora;
 
 -- ------------------------------------------------------------
 -- 2. Quantos registros tem em cada tabela
---    Esperado: 16 tabelas, 11 maquinas, 3 usuarios, 39 OS...
+--    Esperado: 15 tabelas, 11 maquinas, 3 usuarios, 39 OS...
 -- ------------------------------------------------------------
 SELECT 'equipes'             AS tabela, COUNT(*) AS registros FROM equipes
 UNION ALL SELECT 'setores',             COUNT(*) FROM setores
@@ -40,8 +40,7 @@ UNION ALL SELECT 'chamado_eventos',     COUNT(*) FROM chamado_eventos
 UNION ALL SELECT 'chamado_comentarios', COUNT(*) FROM chamado_comentarios
 UNION ALL SELECT 'pecas',               COUNT(*) FROM pecas
 UNION ALL SELECT 'setor_pecas_padrao',  COUNT(*) FROM setor_pecas_padrao
-UNION ALL SELECT 'orcamentos',          COUNT(*) FROM orcamentos
-UNION ALL SELECT 'notificacoes',        COUNT(*) FROM notificacoes;
+UNION ALL SELECT 'orcamentos',          COUNT(*) FROM orcamentos;
 
 
 -- ------------------------------------------------------------

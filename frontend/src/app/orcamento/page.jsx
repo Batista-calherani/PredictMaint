@@ -33,7 +33,7 @@ export default function Orcamento() {
   const campo = (k, rot, step, col = 'col-6') => <div className={col}><label className="form-label" htmlFor={'o-' + k}>{rot}</label><input id={'o-' + k} className="form-control" type="number" min="0" step={step} value={e[k]} onChange={num(k)} /></div>;
 
   return (
-    <Painel soGestor titulo="Orçamento manutenciário" acao={{ label: 'Imprimir', onClick: () => window.print() }}>
+    <Painel titulo="Orçamento manutenciário" acao={{ label: 'Imprimir', onClick: () => window.print() }}>
       <p className="pm-hello">Escolha a máquina e ajuste os números. A conta mostra quanto custa cuidar dela agora e quanto custaria esperar ela quebrar.</p>
       <div className="row g-3">
         <div className="col-xl-6"><section className="pm-card h-100"><h2>Montar orçamento</h2>
