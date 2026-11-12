@@ -52,14 +52,15 @@ services:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+        API_INTERNA: ${API_INTERNA:-http://backend:${BACKEND_PORT:-8080}}
     restart: unless-stopped
     depends_on:
       - backend
     environment:
       NODE_ENV: production
       PORT: ${FRONTEND_PORT:-3000}
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
     expose:
       - "${FRONTEND_PORT:-3000}"
 
