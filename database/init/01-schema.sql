@@ -2,7 +2,7 @@
 --  PredictMaint · Estrutura do banco (MySQL 8)
 --  Responsável: Luiz (Banco de Dados)
 --
---  Este arquivo cria TODAS as tabelas que as telas do front usam.
+--  Este arquivo cria TODAS as tabelas que as telas do front usam (16).
 --  Os dados de exemplo ficam em 02-seed.sql.
 --
 --  Como rodar:
@@ -24,7 +24,7 @@ USE predictmaint;
 SET FOREIGN_KEY_CHECKS = 0;
 DROP VIEW  IF EXISTS vw_maquinas, vw_ordens, vw_chamados, vw_alertas, vw_medicoes;
 DROP TABLE IF EXISTS
-  chamado_comentarios, chamado_eventos, chamados,
+  notificacoes, chamado_comentarios, chamado_eventos, chamados,
   orcamentos, setor_pecas_padrao, pecas,
   ordens_servico, alertas, medicoes, grandezas,
   usuario_perfis, usuarios, maquinas, setores, equipes,
@@ -254,6 +254,26 @@ CREATE TABLE orcamentos (
   criado_em        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_orc_maquina FOREIGN KEY (maquina_id) REFERENCES maquinas(id),
   CONSTRAINT fk_orc_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
+);
+
+-- ------------------------------------------------------------
+-- Notificações: o gestor envia um aviso a um usuário
+-- (ex.: "urgência na PH-03"). Aparece no sininho de quem recebe.
+-- ------------------------------------------------------------
+CREATE TABLE notificacoes (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  destinatario_id INT NOT NULL,
+  remetente_id    INT NULL,
+  maquina_id      INT NULL,                                    -- máquina relacionada (opcional)
+  prioridade      ENUM('normal','urgente') NOT NULL DEFAULT 'normal',
+  titulo          VARCHAR(120) NOT NULL,
+  mensagem        TEXT NULL,
+  criado_em       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  lida_em         DATETIME NULL,                               -- NULL = ainda não lida
+  CONSTRAINT fk_notif_destinatario FOREIGN KEY (destinatario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  CONSTRAINT fk_notif_remetente    FOREIGN KEY (remetente_id)    REFERENCES usuarios(id) ON DELETE SET NULL,
+  CONSTRAINT fk_notif_maquina      FOREIGN KEY (maquina_id)      REFERENCES maquinas(id) ON DELETE SET NULL,
+  INDEX ix_notif_caixa (destinatario_id, lida_em, criado_em)
 );
 
 -- ============================================================

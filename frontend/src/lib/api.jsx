@@ -10,6 +10,14 @@ import { mock } from './mock';
 const BASE = (process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE || '').replace(/\/+$/, '');
 export const modoDemo = !BASE;
 
+// Fotos e arquivos enviados ficam na API em /uploads/...: monta o endereço completo.
+// Ex.: BASE http://localhost:8080/api + /uploads/x.jpg -> http://localhost:8080/uploads/x.jpg
+export function urlArquivo(caminho) {
+  if (!caminho) return null;
+  if (/^(https?:|data:|blob:)/.test(caminho)) return caminho;
+  return BASE.replace(/\/api$/, '') + caminho;
+}
+
 async function req(method, path, body) {
   if (!BASE) return mock(method, path, body);
   const headers = {};
@@ -55,5 +63,15 @@ export const api = {
   salvarOrcamento: d => req('POST', '/orcamento', d),
   chamados: () => req('GET', '/chamados'),
   criarChamado: d => req('POST', '/chamados', d),
-  comentarChamado: (id, texto) => req('POST', `/chamados/${id}/comentarios`, { texto })
+  comentarChamado: (id, texto) => req('POST', `/chamados/${id}/comentarios`, { texto }),
+  setores: () => req('GET', '/setores'),
+  usuarios: p => req('GET', '/users' + q(p)),
+  criarUsuario: d => req('POST', '/users', d),
+  editarUsuario: (id, d) => req('PUT', '/users/' + id, d),
+  desativarUsuario: id => req('DELETE', '/users/' + id),
+  notificacoes: () => req('GET', '/notificacoes'),
+  marcarLida: id => req('PATCH', `/notificacoes/${id}/lida`),
+  marcarTodasLidas: () => req('PATCH', '/notificacoes/lidas'),
+  enviarNotificacao: d => req('POST', '/notificacoes', d),
+  notificacoesEnviadas: usuario => req('GET', '/notificacoes/enviadas' + q({ usuario }))
 };

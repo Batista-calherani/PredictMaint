@@ -130,3 +130,13 @@ export async function busca(req, res, next) {
     next(e);
   }
 }
+
+// GET /api/setores -> ["Estamparia", "Logística", ...]
+export async function setores(req, res, next) {
+  try {
+    const [rows] = await pool.query("SELECT nome FROM setores ORDER BY nome");
+    res.json(rows.map((r) => r.nome));
+  } catch (e) {
+    next(e);
+  }
+}

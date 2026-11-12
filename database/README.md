@@ -67,6 +67,8 @@ erDiagram
   chamados ||--o{ chamado_eventos : "linha do tempo"
   chamados ||--o{ chamado_comentarios : ""
   maquinas ||--o{ orcamentos : ""
+  usuarios ||--o{ notificacoes : recebe
+  maquinas |o--o{ notificacoes : "sobre"
 ```
 
 ## Tabelas
@@ -82,6 +84,7 @@ erDiagram
 | `ordens_servico` | Ordens (Kanban) | Código exibido: `OS-` + id com 4 dígitos. |
 | `chamados`, `chamado_eventos`, `chamado_comentarios` | Abrir chamado, Meus chamados | Código exibido: `CH-` + id. |
 | `pecas`, `setor_pecas_padrao`, `orcamentos` | Orçamento | `detalhes` guarda os parâmetros do cálculo em JSON. |
+| `notificacoes` | Usuários › Enviar alerta, sino de avisos | Aviso do gestor para um usuário, com máquina opcional e prioridade `normal`/`urgente`. `lida_em` vazio = não lido. |
 
 ## Views (atalho para o backend)
 

@@ -1,15 +1,16 @@
 import { pool } from "../config/database.js";
 import { dm, hojeISO, paraDataSQL } from "../lib/formato.js";
-import { erro400, erro404, idDoCodigo } from "../lib/http.js";
+import { erro400, erro403, erro404, idDoCodigo } from "../lib/http.js";
 
 // Consulta base das OS (o código "OS-0241" é montado em formatarOS)
 export const SQL_OS = `
   SELECT o.id, o.titulo, o.descricao, m.codigo AS ativo, e.nome AS equipe, o.prazo,
-         o.prioridade, o.status, o.alerta_id, o.chamado_id,
+         o.prioridade, o.status, o.alerta_id, o.chamado_id, ch.foto_url,
          (o.status <> 'concluida' AND o.prazo < CURDATE()) AS vencida
     FROM ordens_servico o
     JOIN maquinas m     ON m.id = o.maquina_id
-    LEFT JOIN equipes e ON e.id = o.equipe_id`;
+    LEFT JOIN equipes e ON e.id = o.equipe_id
+    LEFT JOIN chamados ch ON ch.id = o.chamado_id`;
 
 export const codigoOS = (id) => "OS-" + String(id).padStart(4, "0");
 
@@ -23,6 +24,8 @@ export const formatarOS = (o) => ({
   status: o.status,
   descricao: o.descricao || "",
   alertaId: o.alerta_id,
+  chamado: o.chamado_id ? "CH-" + o.chamado_id : null,
+  foto: o.foto_url || null, // foto que o funcionário anexou no chamado
   vencida: !!o.vencida,
 });
 
@@ -102,6 +105,10 @@ export async function updateOrdem(req, res, next) {
     if (!atual) throw erro404("OS não encontrada.");
 
     const b = req.body, campos = [], valores = [];
+    // Técnico só movimenta o status; prazo, prioridade, equipe e textos são do gestor
+    if (req.usuario.perfil !== "gestor" && ["prioridade", "equipe", "prazo", "titulo", "descricao"].some((k) => b[k] !== undefined)) {
+      throw erro403("O técnico só pode mudar o status da OS. Peça ao gestor para alterar o resto.");
+    }
     if (b.status !== undefined) {
       if (!STATUS.includes(b.status)) throw erro400("Status inválido.");
       campos.push("status = ?", "concluido_em = IF(? = 'concluida', NOW(), NULL)");

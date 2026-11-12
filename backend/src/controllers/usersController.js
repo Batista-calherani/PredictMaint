@@ -35,14 +35,46 @@ async function idDoSetor(nome) {
   return rows[0].id;
 }
 
+// Funcionário precisa de setor (é o setor dele que aparece no chamado)
+function exigirSetor(perfis, setor) {
+  if (perfis.includes("funcionario") && !setor) throw erro400("Escolha o setor do funcionário.");
+}
+
+// Nunca deixar o sistema sem nenhum gestor ativo
+async function garantirOutroGestor(conn, id) {
+  const [[{ n }]] = await conn.query(
+    `SELECT COUNT(*) AS n FROM usuarios u JOIN usuario_perfis p ON p.usuario_id = u.id
+      WHERE p.perfil = 'gestor' AND u.ativo = TRUE AND u.id <> ?`,
+    [id],
+  );
+  if (!n) throw erro400("Este é o último gestor ativo. Cadastre outro gestor antes.");
+}
+
 const validarSenha = (s) => {
   if (String(s || "").length < 6) throw erro400("A senha precisa ter pelo menos 6 caracteres.");
 };
 
-// GET /api/users
+// GET /api/users?q=texto&perfil=tecnico&ativo=1
 export async function getUsers(req, res, next) {
   try {
-    const [rows] = await pool.query(`${SQL_USUARIO} GROUP BY u.id ORDER BY u.nome`);
+    const where = [], valores = [];
+    const q = String(req.query.q || "").trim();
+    if (q) {
+      where.push("(u.nome LIKE ? OR u.email LIKE ? OR u.matricula LIKE ?)");
+      valores.push(`%${q}%`, `%${q}%`, `%${q}%`);
+    }
+    if (PERFIS.includes(req.query.perfil)) {
+      where.push("u.id IN (SELECT usuario_id FROM usuario_perfis WHERE perfil = ?)");
+      valores.push(req.query.perfil);
+    }
+    if (req.query.ativo === "1" || req.query.ativo === "0") {
+      where.push("u.ativo = ?");
+      valores.push(req.query.ativo === "1");
+    }
+    const [rows] = await pool.query(
+      `${SQL_USUARIO} ${where.length ? "WHERE " + where.join(" AND ") : ""} GROUP BY u.id ORDER BY u.ativo DESC, u.nome`,
+      valores,
+    );
     res.json(rows.map(formatar));
   } catch (e) {
     next(e);
@@ -58,6 +90,7 @@ export async function createUsers(req, res, next) {
     if (!/^\S+@\S+\.\S+$/.test(email)) throw erro400("E-mail inválido.");
     validarSenha(senha);
     const perfis = validarPerfis(req.body.perfis ?? req.body.perfil);
+    exigirSetor(perfis, setor);
 
     await conn.beginTransaction();
     const [r] = await conn.query(
@@ -80,7 +113,8 @@ export async function updateUsers(req, res, next) {
   const conn = await pool.getConnection();
   try {
     const id = Number(req.params.id);
-    if (!(await buscar(id))) throw erro404("Usuário não encontrado.");
+    const atual = await buscar(id);
+    if (!atual) throw erro404("Usuário não encontrado.");
 
     const b = req.body, campos = [], valores = [];
     if (b.nome !== undefined) { campos.push("nome = ?"); valores.push(String(b.nome).trim()); }
@@ -91,6 +125,11 @@ export async function updateUsers(req, res, next) {
     if (b.senha) { validarSenha(b.senha); campos.push("senha_hash = ?"); valores.push(await bcrypt.hash(String(b.senha), 10)); }
     const perfis = b.perfis !== undefined ? validarPerfis(b.perfis) : null;
     if (!campos.length && !perfis) throw erro400("Nenhum campo para atualizar.");
+    exigirSetor(perfis || atual.perfis, b.setor !== undefined ? b.setor : atual.setor);
+
+    const perdeGestor = atual.perfis.includes("gestor") && atual.ativo && ((perfis && !perfis.includes("gestor")) || b.ativo === false);
+    if (perdeGestor && id === req.usuario.id) throw erro400("Você não pode tirar o seu próprio acesso de gestor.");
+    if (perdeGestor) await garantirOutroGestor(conn, id);
 
     await conn.beginTransaction();
     if (campos.length) await conn.query(`UPDATE usuarios SET ${campos.join(", ")} WHERE id = ?`, [...valores, id]);
@@ -113,8 +152,10 @@ export async function deleteUsers(req, res, next) {
   try {
     const id = Number(req.params.id);
     if (id === req.usuario.id) throw erro400("Você não pode desativar o seu próprio usuário.");
-    const [r] = await pool.query("UPDATE usuarios SET ativo = FALSE WHERE id = ?", [id]);
-    if (!r.affectedRows) throw erro404("Usuário não encontrado.");
+    const atual = await buscar(id);
+    if (!atual) throw erro404("Usuário não encontrado.");
+    if (atual.perfis.includes("gestor") && atual.ativo) await garantirOutroGestor(pool, id);
+    await pool.query("UPDATE usuarios SET ativo = FALSE WHERE id = ?", [id]);
     res.json({ mensagem: "Usuário desativado." });
   } catch (e) {
     next(e);
