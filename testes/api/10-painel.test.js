@@ -65,3 +65,16 @@ test("dashboard não quebra com máquina sem medições, mesmo sendo a mais crí
     await del(`/maquinas/${cod}`, { token: T.gestor });
   }
 });
+
+test("filtros de todas as listas respondem sem erro", async () => {
+  const rotas = [
+    "/maquinas?status=critico&setor=Estamparia&ordem=saude",
+    "/alertas?setor=Estamparia",
+    "/ordens?prioridade=alta&equipe=" + encodeURIComponent("Mecânica") + "&periodo=30",
+    "/medicoes?maquina=PH-03&limite=5",
+    "/users?perfil=tecnico&ativo=1&q=" + encodeURIComponent("José"),
+    "/chamados",
+    "/busca?q=" + encodeURIComponent("Prensa Hidráulica"),
+  ];
+  for (const rota of rotas) status(await get(rota, { token: T.gestor }), 200, rota);
+});

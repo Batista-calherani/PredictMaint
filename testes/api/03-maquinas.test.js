@@ -24,6 +24,19 @@ test("filtra por setor e ordena por saúde", async () => {
   assert.deepEqual(saudes, [...saudes].sort((a, b) => a - b), "não veio em ordem de saúde");
 });
 
+for (const st of ["critico", "atencao", "normal"]) {
+  test(`filtra por status ${st} (sozinho, com setor e com ordem)`, async () => {
+    const so = await get(`/maquinas?status=${st}`, { token: T.gestor });
+    status(so, 200, `status=${st}`);
+    assert.ok(so.body.length > 0, `nenhuma máquina ${st} no exemplo`);
+    assert.ok(so.body.every((m) => m.status === st), "veio máquina de outro status");
+    const setor = so.body[0].setor;
+    const comSetor = await get(`/maquinas?status=${st}&setor=${encodeURIComponent(setor)}&ordem=codigo`, { token: T.gestor });
+    status(comSetor, 200, "status + setor + ordem");
+    assert.ok(comSetor.body.length > 0 && comSetor.body.every((m) => m.status === st && m.setor === setor));
+  });
+}
+
 test("cadastra uma máquina nova", async () => {
   const r = await post("/maquinas", { token: T.gestor, body: { id: COD, nome: "Máquina de teste", setor: "Usinagem", custoParada: 500 } });
   status(r, 201, "cadastro");

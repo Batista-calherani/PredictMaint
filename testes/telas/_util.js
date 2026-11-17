@@ -5,10 +5,21 @@ import { LOGINS, SENHA } from "../config.js";
 export const DESTINO = { gestor: "/dashboard", tecnico: "/dashboard", funcionario: "/chamado" };
 
 // Entra no sistema pela tela de login, como uma pessoa faria
+// Abre um endereço; se a tela anterior ainda estiver redirecionando, o navegador cancela
+// a navegação (ERR_ABORTED): espera assentar e tenta de novo.
+async function abrir(page, url) {
+  for (let i = 0; i < 3; i++) {
+    try { return await page.goto(url); } catch (e) {
+      if (!/ERR_ABORTED|interrupted/i.test(String(e)) || i === 2) throw e;
+      await page.waitForLoadState("load").catch(() => {});
+    }
+  }
+}
+
 export async function entrar(page, perfil, usuario = LOGINS[perfil], senha = SENHA) {
-  await page.goto("/");
+  await abrir(page, "/");
   await page.evaluate(() => localStorage.clear());
-  await page.goto("/");
+  await abrir(page, "/");
   await page.locator(`label[for=p-${perfil}]`).click();
   await page.fill("#usuario", usuario);
   await page.fill("#senha", senha);
