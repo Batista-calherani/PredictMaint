@@ -12,7 +12,10 @@ export const pool = mysql.createPool({
   queueLimit: 0,
   decimalNumbers: true, // DECIMAL chega como número, não como texto
   dateStrings: true, // datas chegam como "2026-11-04 08:40:00", sem conversão de fuso
-  charset: "utf8mb4",
+  // UTF-8 com a mesma regra de comparação de texto do MySQL 8 (utf8mb4_0900_ai_ci).
+  // Com só "utf8mb4", a conexão usaria utf8mb4_general_ci e filtros como status = 'critico'
+  // dariam "Illegal mix of collations" ao comparar com colunas calculadas das views.
+  charset: "UTF8MB4_0900_AI_CI",
 });
 
 export async function checkDatabaseConnection() {

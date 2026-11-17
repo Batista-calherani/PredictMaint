@@ -25,9 +25,16 @@ export async function getDashboard(req, res, next) {
     const [alertas] = await pool.query("SELECT * FROM vw_alertas WHERE estado <> 'resolvido' ORDER BY criado_em DESC");
     const [maqs] = await pool.query("SELECT id, nome, setor, saude, status FROM vw_maquinas ORDER BY saude, id");
 
-    // Gráfico do topo: a máquina mais crítica na grandeza mais perto do limite
-    const foco = maqs[0]?.id;
+    // Gráfico do topo: a máquina mais crítica QUE TEM medições de vibração.
+    // Máquina nova (ainda sem leituras) não pode deixar o gráfico do dashboard vazio.
+    const [[comLeitura]] = await pool.query(
+      `SELECT vm.id FROM vw_maquinas vm
+        WHERE EXISTS (SELECT 1 FROM medicoes me WHERE me.maquina_id = vm.maquina_id AND me.grandeza = 'vibracao')
+        ORDER BY vm.saude, vm.id LIMIT 1`,
+    );
+    const foco = comLeitura?.id || maqs[0]?.id;
     const sv = foco ? await serieDe(foco, "vibracao") : null;
+    const nomeFoco = maqs.find((m) => m.id === foco)?.nome || "";
     const emAberto = abertas + andamento + peca;
 
     res.json({
@@ -39,7 +46,7 @@ export async function getDashboard(req, res, next) {
         { k: "mttr", rotulo: "MTTR", valor: mttr.horas ? Math.round(mttr.horas * 10) / 10 : 3.8, unidade: " h", casas: 1, sub: "Tempo médio de reparo", escalaMin: 0, historico: semanas([4.6, 4.4, 4.5, 4.1, 4.0, 3.9, 3.9, mttr.horas ? Math.round(mttr.horas * 10) / 10 : 3.8]), explica: "Quanto tempo a equipe leva, em média, para devolver a máquina à produção. Quanto menor, melhor." },
         { k: "os", rotulo: "OS abertas", valor: emAberto, unidade: "", casas: 0, sub: vencidas + " com prazo vencido", escalaMin: 0, historico: semanas([14, 15, 13, 17, 16, 19, 17, emAberto]), explica: "Ordens de serviço ainda não concluídas (abertas, em andamento e aguardando peça). As vencidas passaram do prazo combinado." },
       ],
-      vibracao: sv && { maquina: sv.maquina, grandeza: sv.nome, unidade: sv.unidade, limite: sv.limite, pontos: sv.pontos },
+      vibracao: sv && { maquina: sv.maquina, nomeMaquina: nomeFoco, grandeza: sv.nome, unidade: sv.unidade, limite: sv.limite, pontos: sv.pontos },
       alertas: alertas.filter((a) => a.estado === "novo").sort((a, b) => a.min - b.min).slice(0, 4).map(formatarAlerta),
       todosAlertas: alertas.map(formatarAlerta),
       saude: maqs.map((m) => ({ id: m.id, nome: m.nome, setor: m.setor, saude: m.saude, status: m.status })),

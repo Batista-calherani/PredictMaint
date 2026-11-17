@@ -16,9 +16,18 @@ function OsBars({ o, max, grande }) {
     <div className="mb-3" key={t}><div className="pm-row"><span>{t}</span><span>{v}</span></div><div className={`pm-bar ${c} ${grande ? 'lg' : ''}`}><i style={{ width: (v / max * 100).toFixed(0) + '%' }} /></div></div>);
 }
 
+const NOME_GRANDEZA = { vibracao: 'vibração', temperatura: 'temperatura', corrente: 'corrente' };
+
+// Aviso no lugar do gráfico quando a máquina ainda não tem leituras (ex.: máquina recém-cadastrada)
+const SemMedicoes = ({ maquina, grandeza = 'vibracao' }) => (
+  <Vazio titulo={`Ainda não há medições de ${NOME_GRANDEZA[grandeza] || grandeza}${maquina ? ' para ' + maquina : ''}`} sub="O gráfico aparece assim que a primeira leitura for registrada.">
+    {maquina && <Link className="btn btn-sm btn-outline-dark" href={`/medicoes?maquina=${encodeURIComponent(maquina)}`}>Registrar medição</Link>}
+  </Vazio>
+);
+
 function VibFoco({ d }) {
-  const [maq, setMaq] = useState(d.vibracao.maquina), [g, setG] = useState('vibracao'), [per, setPer] = useState(99);
-  const l = useLoad(() => api.serie(maq, g), [maq, g]);
+  const [maq, setMaq] = useState(d.vibracao?.maquina || d.maquinas[0]?.id || ''), [g, setG] = useState('vibracao'), [per, setPer] = useState(99);
+  const l = useLoad(() => (maq ? api.serie(maq, g) : Promise.resolve(null)), [maq, g]);
   return (
     <>
       <div className="row g-3 mb-3">
@@ -26,7 +35,7 @@ function VibFoco({ d }) {
         <div className="col-sm-4"><label className="form-label" htmlFor="ex-g">Grandeza</label><select id="ex-g" className="form-select" value={g} onChange={e => setG(e.target.value)}><option value="vibracao">Vibração</option><option value="temperatura">Temperatura</option><option value="corrente">Corrente</option></select></div>
         <div className="col-sm-4"><span className="form-label d-block">Período</span><div className="btn-group w-100">{[[4, '7 dias'], [7, '14 dias'], [99, 'Tudo']].map(([v, t]) => <span key={v} className="d-contents"><input type="radio" className="btn-check" name="per" id={'per' + v} checked={per === v} onChange={() => setPer(v)} /><label className="btn btn-outline-dark" htmlFor={'per' + v}>{t}</label></span>)}</div></div>
       </div>
-      <Carga l={l}>{s => { const ult = s.pontos[s.pontos.length - 1].y, mx = Math.max(...s.pontos.map(x => x.y)), dif = ult - s.limite; return <>
+      <Carga l={l}>{s => { if (!s || !s.pontos?.length) return <SemMedicoes maquina={maq} grandeza={g} />; const ult = s.pontos.at(-1).y, mx = Math.max(...s.pontos.map(x => x.y)), dif = ult - s.limite; return <>
         <LineChart pts={s.pontos.slice(-per)} limite={s.limite} unit={s.unidade} big h={340} label={`${s.nome} de ${s.maquina}`} />
         <div className="row g-3 mt-1">{[['Última leitura', `${num(ult)} ${s.unidade}`], ['Maior valor', `${num(mx)} ${s.unidade}`], ['Limite de alarme', `${num(s.limite)} ${s.unidade}`], ['Folga', dif > 0 ? `${num(dif)} acima do limite` : `${num(-dif)} abaixo do limite`]].map(([a, b]) => <div key={a} className="col-6 col-md-3"><Mini rotulo={a} valor={b} /></div>)}</div></>; }}</Carga>
     </>
@@ -41,7 +50,7 @@ function Conteudo({ d, u, setFoco }) {
       <p className="pm-hello">{saudacao()}, {u.nome.split(' ')[0]}. {crit ? <>A <b>{crit.ativo}</b> está pedindo atenção: {crit.titulo.toLowerCase()}, há {crit.ha}. Clique em qualquer gráfico ou indicador para vê-lo em destaque.</> : 'A planta está tranquila agora. Clique em qualquer gráfico ou indicador para vê-lo em destaque.'}</p>
       <div className="row g-3">
         {d.kpis.map(k => <div className="col-6 col-xl-3" key={k.k}><Foco f={'kpi:' + k.k} label={k.rotulo} cls="h-100" setFoco={setFoco}><p className="pm-lbl">{k.rotulo}</p><p className="pm-kpi">{kpiVal(k)}</p><p className="pm-sub">{k.sub}</p></Foco></div>)}
-        <div className="col-xl-8"><Foco f="vib" label="vibração" cls="h-100" setFoco={setFoco}><h2>Vibração · Prensa Hidráulica {d.vibracao.maquina} ({d.vibracao.unidade})</h2><LineChart pts={d.vibracao.pontos} limite={d.vibracao.limite} unit={d.vibracao.unidade} label="Vibração da prensa PH-03 ao longo de outubro" /></Foco></div>
+        <div className="col-xl-8"><Foco f="vib" label="vibração" cls="h-100" setFoco={setFoco}>{d.vibracao?.pontos?.length ? <><h2>Vibração · {d.vibracao.nomeMaquina || 'Máquina'} {d.vibracao.maquina} ({d.vibracao.unidade})</h2><LineChart pts={d.vibracao.pontos} limite={d.vibracao.limite} unit={d.vibracao.unidade} label={`Vibração de ${d.vibracao.maquina} nas últimas leituras`} /></> : <><h2>Vibração</h2><SemMedicoes maquina={d.vibracao?.maquina} /></>}</Foco></div>
         <div className="col-xl-4"><Foco f="alertas" label="alertas recentes" cls="h-100" setFoco={setFoco}><h2>Alertas recentes</h2>{d.alertas.length ? d.alertas.map(a => <div className="pm-alert-i" key={a.id}><Badge k={a.nivel} /><div><strong>{a.titulo}</strong><small>{a.ativo} · há {a.ha}</small></div></div>) : <Vazio titulo="Sem alertas novos" sub="Bom sinal." />}</Foco></div>
         <div className="col-xl-7"><Foco f="saude" label="saúde dos ativos" cls="h-100" setFoco={setFoco}><h2>Saúde dos ativos</h2><div className="table-responsive"><table className="table"><thead><tr><th>MÁQUINA</th><th>ÍNDICE DE SAÚDE</th><th>STATUS</th></tr></thead><tbody>{d.saude.slice(0, 4).map(m => <tr key={m.id}><td>{m.nome} {m.id}</td><td><SaudeBar v={m.saude} /></td><td><Badge k={m.status} /></td></tr>)}</tbody></table></div></Foco></div>
         <div className="col-xl-5"><Foco f="os" label="ordens de serviço por status" cls="h-100" setFoco={setFoco}><h2>Ordens de serviço por status</h2><OsBars o={os} max={maxOS} /></Foco></div>
