@@ -22,7 +22,7 @@ const NOME_GRANDEZA = { vibracao: 'vibração', temperatura: 'temperatura', corr
 // Aviso no lugar do gráfico quando a máquina ainda não tem leituras (ex.: máquina recém-cadastrada)
 const SemMedicoes = ({ maquina, grandeza = 'vibracao' }) => (
   <Vazio titulo={`Ainda não há medições de ${NOME_GRANDEZA[grandeza] || grandeza}${maquina ? ' para ' + maquina : ''}`} sub="O gráfico aparece assim que a primeira leitura for registrada.">
-    {maquina && <Link className="btn btn-sm btn-outline-dark mt-2" href={`/medicoes?maquina=${encodeURIComponent(maquina)}`}>Registrar medição</Link>}
+    {maquina && <Link className="btn btn-sm btn-outline-dark" href={`/medicoes?maquina=${encodeURIComponent(maquina)}`}>Registrar medição</Link>}
   </Vazio>
 );
 

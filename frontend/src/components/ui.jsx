@@ -5,7 +5,7 @@ import { NOMES, num } from '@/lib/util';
 /* ---------- pecinhas ---------- */
 export const Badge = ({ k, children }) => <span className={`pm-b pm-b-${k}`}>{children ?? NOMES[k] ?? k}</span>;
 export const SaudeBar = ({ v }) => <div className="pm-health"><div className="pm-bar"><i style={{ width: v + '%' }} /></div><span>{v}%</span></div>;
-export const Vazio = ({ titulo, sub, children }) => <div className="pm-empty"><strong>{titulo}</strong>{sub}{children}</div>;
+export const Vazio = ({ titulo, sub, children }) => <div className="pm-empty"><strong>{titulo}</strong>{sub && <span className="d-block">{sub}</span>}{children && <div className="pm-empty-acao">{children}</div>}</div>;
 export const Mini = ({ rotulo, valor }) => <div className="pm-mini"><span className="pm-lbl">{rotulo}</span><b>{valor}</b></div>;
 
 /* ---------- carregamento de dados ---------- */
