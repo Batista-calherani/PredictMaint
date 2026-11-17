@@ -3,9 +3,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Painel from '@/components/Painel';
 import { Badge, Carga, Vazio, useLoad, useToast } from '@/components/ui';
-import { api } from '@/lib/api';
 import { calcOrcamento } from '@/lib/calc';
-import { brl, param } from '@/lib/util';
+import { api, brl, param } from '@/lib/util';
 
 const CORES = { mo: '#1b1f27', pecas: '#ffcc14', terceiros: '#8a93a3', parada: '#c0392b', contingencia: '#bfc5d2' };
 const ROT = { mo: 'Mão de obra', pecas: 'Peças e materiais', terceiros: 'Serviços de terceiros', parada: 'Produção parada', contingencia: 'Margem de segurança' };

@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import Painel from '@/components/Painel';
 import { Badge, Carga, Modal, useLoad, useToast } from '@/components/ui';
-import { api, urlArquivo } from '@/lib/api';
-import { EQUIPES, STATUS_OS, param } from '@/lib/util';
+import { api, urlArquivo, EQUIPES, STATUS_OS, param } from '@/lib/util';
 
 const COLS = ['aberta', 'andamento', 'peca', 'concluida'];
 

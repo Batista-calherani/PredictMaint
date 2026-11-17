@@ -1,8 +1,7 @@
 'use client';
 import Link from 'next/link';
-import { api } from '@/lib/api';
 import { Badge, Carga, Mini, Modal, useLoad } from '@/components/ui';
-import { num } from '@/lib/util';
+import { api, num } from '@/lib/util';
 import { usePerfil } from '@/lib/perfil';
 
 /* Detalhe de uma máquina: usado em Máquinas, Planta e na busca. */

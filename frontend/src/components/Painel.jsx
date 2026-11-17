@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { api } from '@/lib/api';
-import { getUser, saudacao } from '@/lib/util';
+import { api, getUser, saudacao } from '@/lib/util';
 import { Modal } from '@/components/ui';
 import Sino from '@/components/Sino';
 

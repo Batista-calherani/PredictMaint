@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { AreaFuncionario } from '@/components/Painel';
 import { Badge, Carga, Vazio, useLoad, useToast } from '@/components/ui';
-import { api, urlArquivo } from '@/lib/api';
+import { api, urlArquivo } from '@/lib/util';
 
 const SIT = { 'Registrado': 'neutro', 'Triado': 'info', 'Técnico designado': 'info', 'Em reparo': 'atencao', 'Concluído': 'normal' };
 

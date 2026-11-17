@@ -16,8 +16,12 @@ export async function prepararFoto(arquivo) {
     tela.getContext('2d').drawImage(img, 0, 0, tela.width, tela.height);
     img.close?.();
     const blob = await new Promise(ok => tela.toBlob(ok, 'image/jpeg', 0.82));
-    if (blob) return new File([blob], (arquivo.name || 'foto').replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' });
+    if (blob){ 
+      return new File([blob], (arquivo.name || 'foto').replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' })
+    };
   } catch { /* formato que o navegador não abre (ex.: HEIC no Windows) */ }
-  if (!ACEITOS.includes(arquivo.type)) throw new Error('Não consegui abrir essa foto. Use JPG, PNG ou WEBP (ou tire a foto pela câmera).');
+  if (!ACEITOS.includes(arquivo.type)){ 
+    throw new Error('Não consegui abrir essa foto. Use JPG, PNG ou WEBP (ou tire a foto pela câmera).');
+  }
   return arquivo;
 }

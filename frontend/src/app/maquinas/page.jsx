@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react';
 import Painel from '@/components/Painel';
 import AtivoModal from '@/components/AtivoModal';
 import { Badge, Carga, Modal, SaudeBar, Vazio, useLoad, useToast } from '@/components/ui';
-import { api } from '@/lib/api';
-import { param } from '@/lib/util';
+import { api, param } from '@/lib/util';
 
 function NovaMaquina({ setores, onClose, onOk }) {
   const toast = useToast(), [f, setF] = useState({ id: '', nome: '', setor: '', prox: '', custoParada: '' });

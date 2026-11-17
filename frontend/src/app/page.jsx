@@ -44,8 +44,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { api, modoDemo } from '@/lib/api';
-import { getUser } from '@/lib/util';
+import { api, getUser } from '@/lib/util';
 import { Modal, useToast } from '@/components/ui';
 
 const DEMO = [
@@ -94,8 +93,6 @@ export default function Login() {
             <button className="btn btn-primary w-100 py-2" disabled={env}>{env ? 'Entrando…' : 'Entrar'}</button>
           </form>
           <p className="text-secondary text-center small mt-3 mb-0">Problemas de acesso? Fale com o administrador do sistema.</p>
-          {modoDemo && <div className="pm-mini mt-3"><p className="pm-lbl mb-2">Acessos de demonstração</p>
-            {DEMO.map(d => <div key={d.email} className="d-flex justify-content-between align-items-center gap-2 mb-2"><span className="small"><b>{d.rotulo}</b><br />{d.email} · {d.senha}</span><button type="button" className="btn btn-outline-dark btn-sm" onClick={() => { setPerfil(d.perfil); setUsuario(d.email); setSenha(d.senha); setErro(''); }}>Usar</button></div>)}</div>}
         </div>
       </section>
       {esq && <Modal titulo="Recuperar acesso" onClose={() => setEsq(false)} footer={<button className="btn btn-primary" onClick={recuperar}>Pedir nova senha</button>}>

@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Painel from '@/components/Painel';
 import { Badge, Carga, LineChart, Vazio, useLoad, useToast } from '@/components/ui';
-import { api } from '@/lib/api';
-import { num, param } from '@/lib/util';
+import { api, num, param } from '@/lib/util';
 
 const UN = { vibracao: 'mm/s', temperatura: '°C', corrente: 'A' };
 const agora = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); };

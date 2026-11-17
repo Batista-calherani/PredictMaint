@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { AreaFuncionario } from '@/components/Painel';
 import { Badge, Carga, Modal, useLoad, useToast } from '@/components/ui';
-import { api } from '@/lib/api';
+import { api } from '@/lib/util';
 import { prepararFoto } from '@/lib/foto';
 
 const Chips = ({ nome, lista, valor, onChange }) => <div className="d-flex flex-wrap gap-2">{lista.map(t => <span key={t} className="d-contents"><input type="radio" className="btn-check" name={nome} id={nome + t} checked={valor === t} onChange={() => onChange(t)} /><label className="btn btn-outline-dark chip" htmlFor={nome + t}>{t}</label></span>)}</div>;

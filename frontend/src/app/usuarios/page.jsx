@@ -5,8 +5,7 @@
 import { useEffect, useState } from 'react';
 import Painel from '@/components/Painel';
 import { Badge, Carga, Modal, Vazio, useLoad, useToast } from '@/components/ui';
-import { api } from '@/lib/api';
-import { getUser } from '@/lib/util';
+import { api, getUser } from '@/lib/util';
 
 const PERFIS = [['gestor', 'Gestor'], ['tecnico', 'Técnico'], ['funcionario', 'Funcionário']];
 const NOME_PERFIL = Object.fromEntries(PERFIS);

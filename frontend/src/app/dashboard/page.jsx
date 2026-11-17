@@ -3,8 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Painel from '@/components/Painel';
 import { Badge, Carga, LineChart, Mini, Modal, SaudeBar, Vazio, useLoad } from '@/components/ui';
-import { api } from '@/lib/api';
-import { num, saudacao } from '@/lib/util';
+import { api, num, saudacao } from '@/lib/util';
 
 const kpiVal = k => num(k.valor, k.casas) + k.unidade;
 

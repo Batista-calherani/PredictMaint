@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Painel from '@/components/Painel';
 import { Badge, Carga, Modal, Vazio, useLoad, useToast } from '@/components/ui';
-import { api } from '@/lib/api';
-import { param } from '@/lib/util';
+import { api, param } from '@/lib/util';
 import { usePerfil } from '@/lib/perfil';
 
 function Limites({ onClose }) {

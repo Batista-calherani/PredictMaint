@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Painel from '@/components/Painel';
 import AtivoModal from '@/components/AtivoModal';
 import { Badge, Carga, Gauge, useLoad, useToast, Vazio } from '@/components/ui';
-import { api } from '@/lib/api';
-import { NOMES } from '@/lib/util';
+import { api, NOMES } from '@/lib/util';
 import Link from 'next/link';
 
 function PainelAtivo({ id, onHistorico }) {

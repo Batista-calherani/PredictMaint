@@ -3,7 +3,7 @@
    Atualiza sozinho a cada 30 s. Usado na área do gestor/técnico e na do funcionário. */
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { api } from '@/lib/api';
+import { api } from '@/lib/util';
 import { Badge, Modal, Vazio, useToast } from '@/components/ui';
 
 export default function Sino({ claro = false, linkMaquina = true }) {
