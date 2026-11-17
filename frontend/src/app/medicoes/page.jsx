@@ -14,7 +14,7 @@ export default function Medicoes() {
   const [maq, setMaq] = useState(''), [g, setG] = useState('vibracao'), [valor, setValor] = useState(''), [data, setData] = useState(''), [obs, setObs] = useState(''), [env, setEnv] = useState(false);
   const maqs = useLoad(() => api.maquinas({ ordem: 'codigo' }));
   useEffect(() => { setData(agora()); }, []);
-  useEffect(() => { if (maqs.data && !maq) setMaq(param('maquina') || maqs.data[0].id); }, [maqs.data, maq]);
+  useEffect(() => { if (maqs.data?.length && !maq) setMaq(param('maquina') || maqs.data[0].id); }, [maqs.data, maq]);
   const serie = useLoad(() => maq ? api.serie(maq, g) : Promise.resolve(null), [maq, g]);
   const tab = useLoad(() => api.medicoes({ limite: 8 }));
 
