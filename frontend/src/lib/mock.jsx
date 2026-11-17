@@ -199,7 +199,7 @@ import { calcOrcamento } from './calc';
         { k: 'mttr', rotulo: 'MTTR', valor: 3.8, unidade: ' h', casas: 1, sub: 'Tempo médio de reparo', escalaMin: 3, historico: wk([4.6, 4.4, 4.5, 4.1, 4.0, 3.9, 3.9, 3.8]), explica: 'Quanto tempo a equipe leva, em média, para devolver a máquina à produção. Quanto menor, melhor.' },
         { k: 'os', rotulo: 'OS abertas', valor: abertas + and + pec, unidade: '', casas: 0, sub: vencidas + ' com prazo vencido', escalaMin: 10, historico: wk([14, 15, 13, 17, 16, 19, 17, abertas + and + pec]), explica: 'Ordens de serviço ainda não concluídas (abertas, em andamento e aguardando peça). As vencidas passaram do prazo combinado.' }
       ],
-      vibracao: { maquina: 'PH-03', grandeza: 'Vibração', unidade: 'mm/s', limite: sv.limite, pontos: sv.pontos },
+      vibracao: { maquina: 'PH-03', nomeMaquina: 'Prensa Hidráulica', grandeza: 'Vibração', unidade: 'mm/s', limite: sv.limite, pontos: sv.pontos },
       alertas: db.alertas.filter(a => a.estado === 'novo').sort((a, b) => a.min - b.min).slice(0, 4),
       todosAlertas: db.alertas,
       saude: [...db.maquinas].sort((a, b) => a.saude - b.saude).map(m => ({ id: m.id, nome: m.nome, setor: m.setor, saude: m.saude, status: stS(m.saude) })),

@@ -1,7 +1,7 @@
 /* Telas de visão geral: dashboard, planta, preditivo e busca */
 import { test, before } from "node:test";
 import assert from "node:assert/strict";
-import { get, tokens, status } from "./_util.js";
+import { get, post, put, del, tokens, status } from "./_util.js";
 
 let T;
 before(async () => { T = await tokens(); });
@@ -45,4 +45,23 @@ test("acentos e ç chegam certos do banco (UTF-8)", async () => {
   const textos = ordens.map((o) => `${o.titulo} ${o.equipe}`).join(" ");
   assert.match(textos, /Mecânica/, "a palavra Mecânica não veio certa");
   assert.doesNotMatch(textos, /Ã|Â|�/, "apareceu acento quebrado (banco sem UTF-8)");
+});
+
+test("dashboard não quebra com máquina sem medições, mesmo sendo a mais crítica", async () => {
+  const cod = `TST-D${Date.now().toString(36).slice(-4).toUpperCase()}`;
+  status(await post("/maquinas", { token: T.gestor, body: { id: cod, nome: "Máquina sem leituras", setor: "Usinagem" } }), 201, "cadastrar");
+  try {
+    status(await put(`/maquinas/${cod}`, { token: T.gestor, body: { saude: 5 } }), 200, "deixar crítica");
+    const r = await get("/dashboard", { token: T.gestor });
+    status(r, 200, "dashboard");
+    assert.equal(r.body.saude[0].id, cod, "a máquina nova deveria ser a mais crítica");
+    assert.ok(r.body.vibracao.pontos.length > 0, "o gráfico do dashboard ficou vazio");
+    assert.notEqual(r.body.vibracao.maquina, cod, "o gráfico escolheu uma máquina sem leituras");
+    assert.ok(r.body.vibracao.nomeMaquina, "faltou o nome da máquina do gráfico");
+    const serie = await get(`/medicoes/serie?maquina=${cod}&grandeza=vibracao`, { token: T.gestor });
+    status(serie, 200, "série vazia");
+    assert.deepEqual(serie.body.pontos, []);
+  } finally {
+    await del(`/maquinas/${cod}`, { token: T.gestor });
+  }
 });
