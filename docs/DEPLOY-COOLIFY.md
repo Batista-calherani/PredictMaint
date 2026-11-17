@@ -73,16 +73,31 @@ Não use `localhost` em nenhuma URL: no servidor, `localhost` é o próprio cont
 
 ## Acentos (UTF-8)
 
-A imagem do banco (`database/Dockerfile`) já sobe com `utf8mb4` no servidor e no terminal `mysql`
-(`database/conf/utf8mb4.cnf`). Um banco criado **antes** dessa configuração pode ter gravado os
-textos com acento quebrados; nesse caso não adianta só reiniciar.
+A imagem do banco (`database/Dockerfile`) sobe com `utf8mb4` no servidor e no terminal `mysql`
+(`database/conf/utf8mb4.cnf`). A API (`charset: "utf8mb4"`) e o site já usam UTF-8.
 
-Para conferir, no terminal do serviço `database`:
+**Terminal do Coolify:** o `mysql` desse container, sem a configuração acima, usa `latin1`.
+Texto colado ou visto ali sai quebrado (`MecÃ¢nica`). Abra sempre assim:
 
-```sql
-SELECT nome, HEX(nome) FROM predictmaint.equipes WHERE id = 1;
+```bash
+mysql --default-character-set=utf8mb4 -uroot -p predictmaint
 ```
 
-- `Mecânica` e o HEX contém `C3A2` → está certo.
-- HEX contém `C383C2A2` (acento gravado duas vezes) ou `3F` (virou `?`) → o banco precisa ser recriado:
-  apague o volume `mysql-data` em **Persistent Storage** e faça **Deploy** (os dados de exemplo voltam certos).
+**Conferir o banco:**
+
+```sql
+SELECT nome, HEX(nome) FROM equipes WHERE id = 1;
+```
+
+- `Mecânica` com HEX contendo `C3A2` → está certo.
+- `MecÃ¢nica` / HEX com `C383C2A2` → acento gravado duas vezes: rode o conserto abaixo.
+- `Mec?nica` / HEX com `3F` → o acento virou `?` e se perdeu: só recriando (apague o volume `mysql-data` e faça Deploy).
+
+**Consertar sem apagar nada** (desfaz o acento gravado duas vezes em todas as tabelas; texto certo não muda):
+
+```bash
+mysql --default-character-set=utf8mb4 -uroot -p predictmaint < /corrigir-acentos.sql
+```
+
+Se o arquivo não estiver no container, abra o `mysql` como acima e cole o conteúdo de
+`database/corrigir-acentos.sql`.
