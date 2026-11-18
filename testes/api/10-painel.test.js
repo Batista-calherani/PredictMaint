@@ -17,11 +17,16 @@ test("dashboard traz indicadores, alertas, saúde e OS", async () => {
 test("planta ao vivo e replay de 6 horas atrás", async () => {
   const agora = await get("/planta", { token: T.tecnico });
   status(agora, 200, "planta");
-  assert.ok(agora.body.zonas.length >= 3);
+  assert.ok(agora.body.zonas.length >= 1, "a planta veio sem setores");
   const antes = await get("/planta?horas=-6", { token: T.tecnico });
   assert.equal(antes.body.horas, -6);
-  const resumo = await get("/planta/resumo", { token: T.tecnico });
-  assert.ok(resumo.body.criticos + resumo.body.atencao + resumo.body.normais >= 10);
+  // O resumo da planta precisa bater com o total de máquinas ativas (vale para qualquer banco, não só o de exemplo)
+  const resumo = (await get("/planta/resumo", { token: T.tecnico })).body;
+  const maquinas = (await get("/maquinas", { token: T.tecnico })).body;
+  const soma = Number(resumo.criticos) + Number(resumo.atencao) + Number(resumo.normais);
+  assert.equal(soma, maquinas.length, `resumo ${JSON.stringify(resumo)} não bate com ${maquinas.length} máquinas`);
+  const naPlanta = agora.body.zonas.reduce((t, z) => t + z.maquinas.length, 0);
+  assert.equal(naPlanta, maquinas.length, "a planta não mostra todas as máquinas ativas");
 });
 
 test("previsão de vida útil e causas somando 100%", async () => {

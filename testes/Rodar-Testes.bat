@@ -99,10 +99,9 @@ if ($r -match '^[sS]') {
 # ---------------------------------------------------------------
 Passo '3/5 Preparando os testes (primeira vez: 1 a 2 minutos)'
 Set-Location $TESTES
-if (-not (Test-Path (Join-Path $TESTES 'node_modules\@playwright\test'))) {
-    cmd /c "npm install --no-audit --no-fund 2>&1" | Out-Host
-    if ($LASTEXITCODE -ne 0) { Falha 'Nao consegui instalar as ferramentas de teste (npm install).' }
-}
+# Sempre confere: instala na primeira vez e atualiza quando a versao muda (rapido se ja estiver certo)
+cmd /c "npm install --no-audit --no-fund 2>&1" | Out-Host
+if ($LASTEXITCODE -ne 0) { Falha 'Nao consegui instalar as ferramentas de teste (npm install).' }
 $edge = @("${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe", "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
 if (-not $env:PW_CHANNEL -and -not $edge) {
     Info 'Microsoft Edge nao encontrado. Baixando o navegador de testes...'
