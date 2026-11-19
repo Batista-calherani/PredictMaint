@@ -176,6 +176,25 @@ h1,h2,h3,h4,.h5,.h6{font-weight:700;letter-spacing:-.01em}
 .pm-cmp.ok{background:var(--pm-green-bg)}.pm-cmp.bad{background:var(--pm-red-bg)}
 .pm-cmp b{display:block;font-size:1.4rem}
 .table-hover tbody tr[data-id]{cursor:pointer}
+.pm-passo{display:flex;align-items:center;gap:.55rem;font-size:1rem;font-weight:700;margin:0 0 .6rem}
+.pm-passo span{flex:none;width:26px;height:26px;border-radius:50%;background:var(--pm-ink);color:#fff;font-size:.85rem;display:grid;place-items:center}
+.pm-seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid #c9cedb;border-radius:10px;overflow:hidden}
+.pm-seg .btn{border:0;border-radius:0;font-weight:600;color:var(--pm-ink);padding:.5rem}
+.pm-seg .btn-check:checked+.btn{background:var(--pm-ink);color:#fff}
+.pm-seg .btn-check:focus-visible+.btn{outline:3px solid var(--pm-yellow);outline-offset:-3px}
+.pm-pecas{list-style:none;margin:0;padding:0;border:1px solid var(--pm-line);border-radius:10px}
+.pm-pecas li+li{border-top:1px solid var(--pm-line)}
+.pm-peca{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;gap:1rem;padding:.6rem .85rem;cursor:pointer}
+.pm-peca:hover{background:var(--pm-bg)}.pm-peca:focus-visible{outline:3px solid var(--pm-yellow);outline-offset:-3px}
+.pm-peca span:last-child{font-weight:600;white-space:nowrap}
+.pm-peca-edit{padding:.6rem .85rem;background:var(--pm-bg)}
+.pm-add{padding:.4rem 0;font-weight:700;text-decoration:none;color:var(--pm-ink)}
+.pm-add:hover{text-decoration:underline}
+.pm-ajustes summary,.pm-todas summary{cursor:pointer;font-weight:600;color:var(--pm-muted)}
+.pm-todas summary b{color:var(--pm-ink)}
+.pm-economia{background:#fff4c2;border-left:4px solid var(--pm-yellow);border-radius:8px;padding:.7rem .9rem;margin:0 0 1rem}
+.pm-linhas .pm-row{padding:.45rem 0;border-bottom:1px solid var(--pm-line);margin:0}
+.pm-ultimos{margin:1rem 0 0;font-size:.85rem;color:var(--pm-muted)}
 
 /* ---------- Linha do tempo (chamados) ---------- */
 .pm-tl{list-style:none;margin:0;padding:0}
