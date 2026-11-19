@@ -8,7 +8,7 @@ import { api, param } from '@/lib/util';
 function NovaMaquina({ setores, onClose, onOk }) {
   const toast = useToast(), [f, setF] = useState({ id: '', nome: '', setor: '', prox: '', custoParada: '' });
   const set = k => e => setF({ ...f, [k]: e.target.value });
-  async function salvar() { try { await api.criarMaquina(f); toast('Máquina cadastrada. Já aparece na lista e na planta.'); onOk(); } catch (e) { toast(e.message, 'danger'); } }
+  async function salvar() { try { await api.criarMaquina(f); toast('Máquina cadastrada. Já aparece na lista e no dashboard.'); onOk(); } catch (e) { toast(e.message, 'danger'); } }
   return (
     <Modal titulo="Nova máquina" onClose={onClose} footer={<button className="btn btn-primary" onClick={salvar}>Cadastrar máquina</button>}>
       <div className="row g-3">

@@ -4,7 +4,7 @@ import { Badge, Carga, Mini, Modal, useLoad } from '@/components/ui';
 import { api, num } from '@/lib/util';
 import { usePerfil } from '@/lib/perfil';
 
-/* Detalhe de uma máquina: usado em Máquinas, Planta e na busca. */
+/* Detalhe de uma máquina: usado em Máquinas e na busca. */
 export default function AtivoModal({ id, onClose }) {
   const gestor = usePerfil() === 'gestor';
   const l = useLoad(() => api.maquina(id), [id]);

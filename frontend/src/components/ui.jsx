@@ -22,7 +22,7 @@ export function useLoad(fn, deps = []) {
 }
 export function Carga({ l, children }) {
   if (l.erro) return <div className="pm-empty"><strong>Não consegui carregar esta tela.</strong>{l.erro}<div className="mt-3"><button className="btn btn-primary" onClick={l.recarregar}>Tentar de novo</button></div></div>;
-  if (l.carregando && !l.data) return <p className="text-secondary" role="status">Buscando os dados da planta…</p>;
+  if (l.carregando && !l.data) return <p className="text-secondary" role="status">Carregando os dados…</p>;
   return children(l.data);
 }
 

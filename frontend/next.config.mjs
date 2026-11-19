@@ -7,6 +7,10 @@ const API_INTERNA = (process.env.API_INTERNA || "http://backend:8080").replace(/
 
 const nextConfig = {
   output: "standalone",
+  // A tela "Planta ao vivo" foi retirada: quem tiver o endereço antigo cai no Dashboard
+  async redirects() {
+    return [{ source: "/planta", destination: "/dashboard", permanent: false }];
+  },
   async rewrites() {
     return [
       { source: "/api/:caminho*", destination: `${API_INTERNA}/api/:caminho*` },

@@ -157,20 +157,6 @@ h1,h2,h3,h4,.h5,.h6{font-weight:700;letter-spacing:-.01em}
 .gauge .g-num{font-size:30px;font-weight:700;fill:var(--pm-ink)}
 .gauge .g-t{font-size:11px;fill:var(--pm-muted)}
 
-/* ---------- Planta ---------- */
-.pm-zone{border:1px solid var(--pm-line);background:#f7f8fb;border-radius:12px;padding:.9rem 1rem 1.1rem;min-height:170px;height:100%}
-.pm-zone h3{font-size:.85rem;color:var(--pm-muted);margin:0 0 1.1rem;font-weight:700}
-.pm-nodes{display:flex;flex-wrap:wrap;gap:1.1rem 1rem;padding:.3rem}
-.pm-node{border:1.5px solid;border-radius:9px;padding:.35rem .8rem;font-weight:700;font-size:.82rem;cursor:pointer;position:relative;isolation:isolate;font-family:inherit}
-.n-normal{background:var(--pm-green-bg);border-color:var(--pm-green);color:#164f33}
-.n-atencao{background:var(--pm-yellow);border-color:var(--pm-ink);color:var(--pm-ink)}
-.n-critico{background:var(--pm-red);border-color:var(--pm-red-ink);color:#fff}
-.n-critico::after{content:'';position:absolute;inset:-9px;border-radius:50%;background:rgba(192,57,43,.22);z-index:-1;animation:halo 2.2s ease-in-out infinite}
-.pm-node.sel{outline:3px solid var(--pm-ink);outline-offset:3px}
-@keyframes halo{50%{transform:scale(1.18);opacity:.55}}
-.live-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3aa26e;margin-right:.4rem}
-.pm-replay{width:100%;accent-color:var(--pm-ink)}
-
 /* ---------- Kanban ---------- */
 .pm-col{background:#e9ebf1;border-radius:12px;padding:.8rem;height:100%;min-height:140px}
 .pm-col h2{font-size:1rem;margin:.1rem .2rem .7rem}

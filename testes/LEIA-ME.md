@@ -28,11 +28,11 @@ Pelo terminal, dentro desta pasta: `npm install`, depois `npm run api`, `npm run
 - `07` Orçamento: base da máquina, comparativo, servidor recalcula o total, corretiva > preventiva.
 - `08` Usuários e acessos: busca, filtros, cadastro, setor obrigatório, e-mail repetido, chaves liga/desliga (sessão cai na hora), desativar/reativar, troca de senha, proteções do gestor.
 - `09` Avisos (sininho): enviar urgente com máquina, não lidos, só o dono marca como lido, marcar todos, histórico, validações.
-- `10` Dashboard, planta (ao vivo e replay), preditivo (causas somam 100%) e busca.
+- `10` Dashboard, resumo do menu lateral (bate com o total de máquinas), busca, filtros e acentos.
 
 **Telas**
 - Login dos 3 perfis, senha errada, sair.
-- Gestor vê e abre todas as telas sem erro; técnico sem Orçamento/Usuários e sem botões de cadastro; endereço digitado à mão é barrado; funcionário só na área de chamados.
+- Gestor vê e abre todas as telas sem erro; a Planta ao vivo não aparece mais e o endereço antigo leva ao Dashboard; técnico sem Orçamento/Usuários e sem botões de cadastro; endereço digitado à mão é barrado; funcionário só na área de chamados.
 - Técnico registra medição e move OS; funcionário abre chamado e acompanha; chamado com foto de 18 MB (o site reduz antes de enviar) e a foto aparece para o funcionário e na OS do gestor.
 - Usuários: cadastrar, buscar, filtrar, chaves de acesso, alerta urgente chegando no sininho do técnico, desativar.
 - Celular: todas as telas cabem na tela, sem rolagem para o lado.

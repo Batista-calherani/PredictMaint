@@ -1,14 +1,14 @@
 import { test, expect } from "@playwright/test";
 import { entrar, vigiarErros } from "./_util.js";
 
-const TELAS_GESTAO = ["/dashboard", "/planta", "/maquinas", "/medicoes", "/alertas", "/ordens"];
+const TELAS_GESTAO = ["/dashboard", "/maquinas", "/medicoes", "/alertas", "/ordens"];
 
 test.describe("Gestor", () => {
   test("vê o menu completo e todas as telas abrem sem erro", async ({ page }) => {
     const erros = vigiarErros(page);
     await entrar(page, "gestor");
     const menu = page.locator(".pm-nav");
-    for (const item of ["Dashboard", "Planta ao vivo", "Máquinas", "Medições", "Alertas", "Ordens de Serviço", "Orçamento", "Usuários"]) {
+    for (const item of ["Dashboard", "Máquinas", "Medições", "Alertas", "Ordens de Serviço", "Orçamento", "Usuários"]) {
       await expect(menu).toContainText(item);
     }
     for (const tela of [...TELAS_GESTAO, "/orcamento", "/usuarios"]) {
@@ -17,6 +17,17 @@ test.describe("Gestor", () => {
       await expect(page).toHaveURL(new RegExp(tela));
       await expect(page.locator("h1").first()).toBeVisible();
     }
+    expect(erros).toEqual([]);
+  });
+
+  test("Planta ao vivo saiu do menu e o endereço antigo leva ao Dashboard", async ({ page }) => {
+    const erros = vigiarErros(page);
+    await entrar(page, "gestor");
+    await expect(page.locator(".pm-nav")).not.toContainText("Planta ao vivo");
+    await expect(page.locator(".pm-pulse, aside").first()).toContainText(/estado crítico|sem criticidade/);
+    await page.goto("/planta");
+    await page.waitForURL("**/dashboard");
+    await expect(page.locator("h1").first()).toBeVisible();
     expect(erros).toEqual([]);
   });
 

@@ -54,8 +54,6 @@ r.post("/chamados/:id/comentarios", chamados.comentarChamado);
 r.get("/busca", gestao, painel.busca);
 r.get("/dashboard", gestao, painel.getDashboard);
 r.get("/planta/resumo", gestao, painel.getResumoPlanta);
-r.get("/planta", gestao, painel.getPlanta);
-r.get("/planta/:id/preditivo", gestao, painel.getPreditivo);
 
 r.get("/medicoes", gestao, medicoes.getMedicoes);
 r.get("/medicoes/serie", gestao, medicoes.getSerie);

@@ -1,4 +1,4 @@
-/* Telas de visão geral: dashboard, planta, preditivo e busca */
+/* Telas de visão geral: dashboard, resumo do menu lateral e busca */
 import { test, before } from "node:test";
 import assert from "node:assert/strict";
 import { get, post, put, del, tokens, status } from "./_util.js";
@@ -14,22 +14,17 @@ test("dashboard traz indicadores, alertas, saúde e OS", async () => {
   assert.ok(r.body.osPorStatus && typeof r.body.osPorStatus.abertas === "number");
 });
 
-test("planta ao vivo e replay de 6 horas atrás", async () => {
-  const agora = await get("/planta", { token: T.tecnico });
-  status(agora, 200, "planta");
-  assert.ok(agora.body.zonas.length >= 3);
-  const antes = await get("/planta?horas=-6", { token: T.tecnico });
-  assert.equal(antes.body.horas, -6);
-  const resumo = await get("/planta/resumo", { token: T.tecnico });
-  assert.ok(resumo.body.criticos + resumo.body.atencao + resumo.body.normais >= 10);
+test("resumo do menu lateral bate com o total de máquinas ativas", async () => {
+  const resumo = (await get("/planta/resumo", { token: T.tecnico })).body;
+  const maquinas = (await get("/maquinas", { token: T.tecnico })).body;
+  const soma = Number(resumo.criticos) + Number(resumo.atencao) + Number(resumo.normais);
+  assert.equal(soma, maquinas.length, `resumo ${JSON.stringify(resumo)} não bate com ${maquinas.length} máquinas`);
+  assert.equal(Number(resumo.criticos), maquinas.filter((m) => m.status === "critico").length);
 });
 
-test("previsão de vida útil e causas somando 100%", async () => {
-  const r = await get("/planta/PH-03/preditivo", { token: T.gestor });
-  status(r, 200, "preditivo");
-  assert.ok(r.body.rulDias > 0);
-  assert.equal(r.body.causas.reduce((s, c) => s + c.pct, 0), 100);
-  status(await get("/planta/NAO-EXISTE/preditivo", { token: T.gestor }), 404, "máquina inexistente");
+test("a Planta ao vivo foi retirada da API", async () => {
+  status(await get("/planta", { token: T.gestor }), 404, "/planta");
+  status(await get("/planta/PH-03/preditivo", { token: T.gestor }), 404, "preditivo");
 });
 
 test("busca encontra máquina e OS", async () => {

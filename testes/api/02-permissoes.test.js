@@ -10,9 +10,7 @@ before(async () => { T = await tokens(); });
 // Para rotas de escrita, um corpo vazio basta: quem pode recebe 400 (validação), quem não pode recebe 403.
 const MATRIZ = [
   ["GET", "/dashboard", undefined, true, true, false],
-  ["GET", "/planta", undefined, true, true, false],
   ["GET", "/planta/resumo", undefined, true, true, false],
-  ["GET", "/planta/PH-03/preditivo", undefined, true, true, false],
   ["GET", "/busca?q=PH", undefined, true, true, false],
   ["GET", "/maquinas", undefined, true, true, true],
   ["GET", "/maquinas/PH-03", undefined, true, true, true],

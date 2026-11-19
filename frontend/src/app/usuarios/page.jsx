@@ -87,7 +87,7 @@ function EnviarAlerta({ usuario, onClose }) {
 
 const NIVEIS = [
   ['gestor', 'Gestor', 'Tudo do técnico e mais: cadastrar máquinas, abrir OS, limites dos alertas, orçamento, usuários e envio de alertas.'],
-  ['tecnico', 'Técnico', 'Dashboard, planta, máquinas, medições, reconhecer alertas e mudar o status das OS.'],
+  ['tecnico', 'Técnico', 'Dashboard, máquinas, medições, reconhecer alertas e mudar o status das OS.'],
   ['funcionario', 'Funcionário', 'Abrir chamados de manutenção e acompanhar os seus.'],
 ];
 
