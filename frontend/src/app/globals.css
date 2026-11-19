@@ -264,3 +264,11 @@ h1,h2,h3,h4,.h5,.h6{font-weight:700;letter-spacing:-.01em}
 .pm-foto:hover small{text-decoration:underline}
 .pm-foto-previa{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .pm-foto-previa img{width:120px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--pm-line)}
+
+/* Dashboard: faixa de destaque e próximos prazos */
+.pm-destaque{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;background:#fff;border:1px solid var(--pm-line);border-left:4px solid var(--pm-red);border-radius:12px;padding:.8rem 1.1rem;margin:0 0 1rem;color:var(--pm-ink);text-decoration:none}
+.pm-destaque:hover{border-color:var(--pm-ink)}
+.pm-destaque.ok{border-left-color:var(--pm-green)}
+.pm-destaque-ir{margin-left:auto;font-weight:700;white-space:nowrap}
+.pm-prazo{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-bottom:1px solid var(--pm-line)}
+.pm-prazo:last-child{border:0}
