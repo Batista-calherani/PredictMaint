@@ -1,7 +1,5 @@
-/* Telas de visão geral: dashboard, planta, preditivo e busca. */
+/* Telas de visão geral: dashboard, resumo da planta (menu lateral) e busca. */
 import { pool } from "../config/database.js";
-import { erro404 } from "../lib/http.js";
-import { hashTexto, statusSaude } from "../lib/regras.js";
 import { formatarAlerta } from "./alertasController.js";
 import { formatarOS, SQL_OS } from "./ordensController.js";
 import { serieDe } from "./medicoesController.js";
@@ -67,51 +65,6 @@ export async function getResumoPlanta(req, res, next) {
     const [rows] = await pool.query("SELECT status, COUNT(*) AS n FROM vw_maquinas GROUP BY status");
     const n = (s) => rows.find((r) => r.status === s)?.n || 0;
     res.json({ criticos: n("critico"), atencao: n("atencao"), normais: n("normal") });
-  } catch (e) {
-    next(e);
-  }
-}
-
-// GET /api/planta?horas=-6   (replay: como a planta estava há N horas, pela tendência)
-export async function getPlanta(req, res, next) {
-  try {
-    const horas = Math.max(-24, Math.min(0, Number(req.query.horas) || 0));
-    const [maqs] = await pool.query("SELECT id, nome, setor, saude, tend FROM vw_maquinas ORDER BY setor, id");
-    const zonas = {};
-    for (const m of maqs) {
-      const s = Math.max(5, Math.min(100, Math.round(m.saude - m.tend * horas)));
-      (zonas[m.setor] ||= []).push({ id: m.id, nome: m.nome, saude: s, status: statusSaude(s) });
-    }
-    res.json({ horas, zonas: Object.entries(zonas).map(([nome, maquinas]) => ({ nome, maquinas })) });
-  } catch (e) {
-    next(e);
-  }
-}
-
-// GET /api/planta/:id/preditivo  -> vida útil estimada e principais causas
-export async function getPreditivo(req, res, next) {
-  try {
-    const [rows] = await pool.query("SELECT * FROM vw_maquinas WHERE id = ?", [req.params.id]);
-    const m = rows[0];
-    if (!m) throw erro404("Máquina não encontrada.");
-
-    // Peso de cada grandeza = quanto a última leitura está perto do limite crítico
-    const [ult] = await pool.query(
-      `SELECT g.codigo, g.limite_critico,
-              (SELECT valor FROM medicoes me WHERE me.maquina_id = ? AND me.grandeza = g.codigo
-                ORDER BY medido_em DESC, id DESC LIMIT 1) AS valor
-         FROM grandezas g`,
-      [m.maquina_id],
-    );
-    const nomes = { vibracao: "Vibração no mancal", temperatura: "Temperatura do óleo", corrente: "Corrente do motor" };
-    const pesos = ult.map((g) => ({ nome: nomes[g.codigo] || g.codigo, p: g.valor ? g.valor / g.limite_critico : 0.3 }));
-    const soma = pesos.reduce((s, x) => s + x.p, 0) || 1;
-    const causas = pesos.map((x) => ({ nome: x.nome, pct: Math.round((x.p / soma) * 100) })).sort((a, b) => b.pct - a.pct);
-    causas[0].pct += 100 - causas.reduce((s, c) => s + c.pct, 0); // fecha 100%
-
-    // Vida útil restante (RUL): cai com o quadrado da perda de saúde
-    const rulDias = Math.max(2, Math.round(Math.pow(m.saude / 100, 2) * 90));
-    res.json({ id: m.id, nome: m.nome, status: m.status, rulDias: m.saude < 50 ? Math.min(rulDias, 7) : rulDias, confianca: 80 + (hashTexto(m.id) % 15), causas });
   } catch (e) {
     next(e);
   }

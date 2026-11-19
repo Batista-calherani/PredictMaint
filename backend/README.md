@@ -29,8 +29,7 @@ Os logins de teste estão em [`../database/README.md`](../database/README.md).
 | POST | `/api/auth/recuperar` | livre | Pedido de nova senha |
 | GET | `/api/dashboard` | gestão | Indicadores, alertas, saúde e OS |
 | GET | `/api/busca?q=` | gestão | Busca máquinas, OS e alertas |
-| GET | `/api/planta` · `/api/planta/resumo` | gestão | Mapa da planta (`?horas=-6` = replay) |
-| GET | `/api/planta/:codigo/preditivo` | gestão | Vida útil estimada e causas |
+| GET | `/api/planta/resumo` | gestão | Contagem de máquinas críticas, em atenção e normais (menu lateral) |
 | GET | `/api/maquinas` | logado | Lista (`?setor=&status=&ordem=saude\|codigo\|setor`) |
 | GET | `/api/maquinas/:codigo` | logado | Detalhe com medições e OS abertas |
 | POST | `/api/maquinas` | gestor | Cadastra (`id`, `nome`, `setor`, `prox`, `custoParada`) |
