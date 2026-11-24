@@ -7,7 +7,7 @@ import { Modal } from '@/components/ui';
 import Sino from '@/components/Sino';
 
 /* Menu por perfil: o técnico opera o dia a dia; custos e cadastros de pessoas são do gestor. */
-const NAV = [['/dashboard', 'Dashboard'], ['/maquinas', 'Máquinas'], ['/medicoes', 'Medições'], ['/alertas', 'Alertas'], ['/ordens', 'Ordens de Serviço'], ['/orcamento', 'Orçamento manutenciário', 'gestor'], ['/usuarios', 'Usuários', 'gestor']];
+const NAV = [['/dashboard', 'Dashboard'], ['/previsao', 'Previsão de falhas'], ['/maquinas', 'Máquinas'], ['/medicoes', 'Medições'], ['/alertas', 'Alertas'], ['/ordens', 'Ordens de Serviço'], ['/orcamento', 'Orçamento manutenciário', 'gestor'], ['/usuarios', 'Usuários', 'gestor']];
 const PERFIL = { gestor: 'Gestor', tecnico: 'Técnico', funcionario: 'Funcionário' };
 
 /* Guarda de rota: sem login volta para "/", e cada perfil só entra na sua área. */

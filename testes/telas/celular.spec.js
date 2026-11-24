@@ -4,7 +4,7 @@ import { entrar, semRolagemLateral, vigiarErros } from "./_util.js";
 test("gestor no celular: todas as telas cabem na tela", async ({ page }) => {
   const erros = vigiarErros(page);
   await entrar(page, "gestor");
-  for (const tela of ["/dashboard", "/maquinas", "/medicoes", "/alertas", "/ordens", "/orcamento", "/usuarios"]) {
+  for (const tela of ["/dashboard", "/previsao", "/maquinas", "/medicoes", "/alertas", "/ordens", "/orcamento", "/usuarios"]) {
     await page.goto(tela);
     await page.waitForLoadState("networkidle");
     await semRolagemLateral(page);

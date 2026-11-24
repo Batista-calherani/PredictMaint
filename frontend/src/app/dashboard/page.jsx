@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Painel from '@/components/Painel';
 import { Badge, Carga, LineChart, Mini, Modal, SaudeBar, Vazio, useLoad } from '@/components/ui';
 import { api, num, saudacao } from '@/lib/util';
-import { AcoesPreditivas } from '@/components/Previsao';
 
 const kpiVal = k => num(k.valor, k.casas) + k.unidade;
 
@@ -30,7 +29,6 @@ function Conteudo({ d, u, setFoco }) {
         {d.kpis.map(k => <div className="col-6 col-xl-3" key={k.k}><Foco f={'kpi:' + k.k} label={k.rotulo} cls="h-100" setFoco={setFoco}><p className="pm-lbl">{k.rotulo}</p><p className="pm-kpi">{kpiVal(k)}</p><p className="pm-sub">{k.sub}</p></Foco></div>)}
         <div className="col-lg-7"><Foco f="saude" label="saúde dos ativos" cls="h-100" setFoco={setFoco}><h2>Saúde dos ativos</h2><div className="table-responsive"><table className="table mb-0"><thead><tr><th>MÁQUINA</th><th>ÍNDICE DE SAÚDE</th><th>STATUS</th></tr></thead><tbody>{d.saude.slice(0, 5).map(m => <tr key={m.id}><td>{m.nome} <b>{m.id}</b></td><td><SaudeBar v={m.saude} /></td><td><Badge k={m.status} /></td></tr>)}</tbody></table></div></Foco></div>
         <div className="col-lg-5"><Foco f="alertas" label="alertas recentes" cls="h-100" setFoco={setFoco}><h2>Alertas recentes</h2>{d.alertas.length ? d.alertas.map(a => <div className="pm-alert-i" key={a.id}><Badge k={a.nivel} /><div><strong>{a.titulo}</strong><small>{a.ativo} · há {a.ha}</small></div></div>) : <Vazio titulo="Sem alertas novos" sub="Bom sinal." />}</Foco></div>
-        <div className="col-12"><AcoesPreditivas /></div>
         <div className="col-12"><Foco f="os" label="ordens de serviço" setFoco={setFoco}><h2>Ordens de serviço</h2><div className="row g-4"><div className="col-lg-6"><OsBars o={os} max={maxOS} /></div>
           <div className="col-lg-6"><p className="pm-lbl mb-2">Próximos prazos{os.vencidas ? <> · <span className="text-danger">{os.vencidas} vencida{os.vencidas > 1 ? 's' : ''}</span></> : ''}</p>{os.proximas.slice(0, 4).map(o => <div key={o.id} className="pm-prazo"><span><b>{o.id}</b> {o.titulo}</span><span className={o.vencida ? 'text-danger fw-bold' : 'text-secondary'}>{o.prazo}</span></div>)}</div></div></Foco></div>
       </div>

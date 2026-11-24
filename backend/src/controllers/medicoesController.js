@@ -2,7 +2,6 @@ import { pool } from "../config/database.js";
 import { dm, dmhm, paraDataHoraSQL } from "../lib/formato.js";
 import { erro400, erro404 } from "../lib/http.js";
 import { situacaoMedicao, virgula } from "../lib/regras.js";
-import { avaliarPrevisoes } from "./previsaoController.js";
 
 const SQL_MEDICAO = `
   SELECT me.id, me.medido_em, m.codigo AS maquina, me.grandeza, me.valor, me.observacao,
@@ -119,17 +118,8 @@ export async function createMedicao(req, res, next) {
     }
     await conn.commit();
 
-    // Refaz a previsão de falha (regressão linear) desta máquina e grandeza.
-    // Se a previsão der erro, a medição continua salva normalmente.
-    let preditivo = null;
-    try {
-      preditivo = (await avaliarPrevisoes({ maquinaId: m.id, grandeza: g.codigo })).alertas[0] || null;
-    } catch (e) {
-      console.error("Previsão não calculada:", e.message);
-    }
-
     const [nova] = await pool.query(`${SQL_MEDICAO} WHERE me.id = ?`, [r.insertId]);
-    res.status(201).json({ medicao: formatarMedicao(nova[0]), situacao, alertaCriado, alertaPreditivo: preditivo });
+    res.status(201).json({ medicao: formatarMedicao(nova[0]), situacao, alertaCriado });
   } catch (e) {
     await conn.rollback().catch(() => {});
     next(e);
