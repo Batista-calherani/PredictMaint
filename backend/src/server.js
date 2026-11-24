@@ -3,7 +3,7 @@ import "./config/env.js";
 import app from "./app.js";
 import { rodarMigracoes } from "./config/migracoes.js";
 import { pool } from "./config/database.js";
-import { mimicEntries } from "./lib/mimicEntries.js";
+import { mimicMedicoes } from "./lib/mimicMedicoes.js";
 if (process.env.SIMULAR === "1") mimicMedicoes(pool);
 
 const port = Number(process.env.PORT || 8080);
