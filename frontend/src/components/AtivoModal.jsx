@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Badge, Carga, Mini, Modal, useLoad } from '@/components/ui';
 import { api, num } from '@/lib/util';
 import { usePerfil } from '@/lib/perfil';
+import { PrevisaoMaquina } from '@/components/Previsao';
 
 /* Detalhe de uma máquina: usado em Máquinas e na busca. */
 export default function AtivoModal({ id, onClose }) {
@@ -15,6 +16,7 @@ export default function AtivoModal({ id, onClose }) {
       <Carga l={l}>{m => <>
         <div className="row g-3 mb-3"><div className="col-sm-4"><Mini rotulo="Saúde" valor={m.saude + '%'} /></div><div className="col-sm-4"><Mini rotulo="Última medição" valor={m.ultima} /></div><div className="col-sm-4"><Mini rotulo="Próx. manutenção" valor={m.prox} /></div></div>
         <p className="text-secondary mb-3">Setor {m.setor}.</p>
+        <PrevisaoMaquina id={m.id} />
         <h3 className="h6">Últimas medições</h3>
         {m.medicoes.length ? <table className="table table-sm mb-4"><tbody>{m.medicoes.map(x => <tr key={x.id}><td>{x.data}</td><td>{x.nome}</td><td><b>{num(x.valor, 1)} {x.unidade}</b></td><td><Badge k={x.situacao}>{x.situacao === 'critico' ? 'Acima do limite' : undefined}</Badge></td></tr>)}</tbody></table> : <p className="text-secondary">Ainda sem medições registradas.</p>}
         <h3 className="h6">Ordens de serviço em aberto</h3>
