@@ -36,7 +36,10 @@ Os logins de teste estão em [`../database/README.md`](../database/README.md).
 | PUT | `/api/maquinas/:codigo` | gestor | Atualiza campos enviados |
 | DELETE | `/api/maquinas/:codigo` | gestor | Desativa (mantém histórico) |
 | GET | `/api/medicoes` · `/api/medicoes/serie` | gestão | Últimas leituras / série do gráfico |
-| POST | `/api/medicoes` | gestão | Registra leitura; acima do limite abre alerta |
+| POST | `/api/medicoes` | gestão | Registra leitura; acima do limite abre alerta; refaz a previsão de falha |
+| GET | `/api/maquinas/:codigo/previsao` | gestão | Previsão de falha de cada grandeza, com os pontos e a reta do gráfico |
+| GET | `/api/previsoes` | gestão | Previsão de todas as máquinas, das mais urgentes para as mais tranquilas |
+| POST | `/api/previsoes/avaliar` | gestor | Recalcula as previsões e os alertas preditivos na hora |
 | GET | `/api/alertas` | logado | Alertas não resolvidos (`?setor=`) |
 | PATCH | `/api/alertas/:id/reconhecer` | gestão | Marca como reconhecido |
 | GET · PUT | `/api/limites` | gestão · gestor | Limites de vibração, temperatura e corrente |
@@ -66,6 +69,23 @@ ainda tem o perfil com que entrou; se perdeu, a sessão cai na hora (401).
 
 Proteções de usuários: o gestor não consegue desativar a si mesmo, nem tirar o próprio
 perfil de gestor, e o sistema nunca fica sem nenhum gestor ativo. Funcionário precisa de setor.
+
+## Ações preditivas (regressão linear)
+
+A conta fica em `src/lib/regressao.js`; as consultas, os alertas e os avisos em
+`src/controllers/previsaoController.js`.
+
+1. Para cada máquina e grandeza, pega as últimas 10 leituras (até 60 dias atrás).
+2. Traça a reta dos mínimos quadrados `valor = a + b × dia`. `b` é quanto o valor sobe por dia e
+   o R² (0 a 1) é a confiança: o quanto as leituras seguem a reta.
+3. A falha prevista é o dia em que a reta cruza o limite crítico da grandeza.
+4. Situação: `critico` (até 7 dias), `atencao` (até 15 dias), `ok` (mais longe), `estavel`
+   (não sobe ou R² abaixo de 0,6), `acima` (já passou do limite) e `insuficiente` (menos de 5 leituras).
+5. Crítico ou atenção abre o alerta **"Falha prevista de …"** com a data e a ação recomendada, e
+   avisa gestores e técnicos no sininho. Se a tendência some, o alerta é resolvido sozinho.
+
+A previsão é refeita a cada medição registrada e também quando a API liga. As regras
+(quantidade de leituras, R² mínimo, 7 e 15 dias) ficam em `REGRAS`, no começo de `regressao.js`.
 
 ## Atualização automática do banco
 
