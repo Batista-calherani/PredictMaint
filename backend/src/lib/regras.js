@@ -25,3 +25,4 @@ export function calcOrcamento(e, corretiva = false) {
 
 // Hash simples e estável de um texto (usado para variar números de demonstração)
 export const hashTexto = (s) => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+

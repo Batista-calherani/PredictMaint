@@ -2,6 +2,9 @@ import "./config/env.js";
 
 import app from "./app.js";
 import { rodarMigracoes } from "./config/migracoes.js";
+import { pool } from "./config/database.js";
+import { mimicEntries } from "./lib/mimicEntries.js";
+if (process.env.SIMULAR === "1") mimicEntries(pool);
 
 const port = Number(process.env.PORT || 8080);
 
