@@ -66,7 +66,7 @@ async function registrarMedicao(conn, maquina, g) {
  * @param {(medicoes: object[]) => void} [opcoes.aoInserir]  recebe todas as medições da rodada
  * @returns {{ parar: () => void, gerarRodada: () => Promise<object[]> }}
  */
-export function mimicMedicoes(pool, { intervaloMs = 300_000, aoErro = console.error, aoInserir } = {}) {
+export function mimicMedicoes(pool, { intervaloMs = 5000, aoErro = console.error, aoInserir } = {}) {
   async function gerarRodada() {
     // Só máquinas ativas (a mesma regra do POST /api/medicoes)
     const [maquinas] = await pool.query("SELECT id, codigo FROM maquinas WHERE ativo = TRUE ORDER BY id");
