@@ -36,6 +36,7 @@ r.use(autenticar);
 // Máquinas (o funcionário também lista, para abrir chamado)
 r.get("/maquinas", maquinas.getMaquinas);
 r.get("/maquinas/:id", maquinas.getMaquina);
+r.get("/maquinas/:id/previsao", gestao, previsao.getPrevisaoMaquina);
 r.post("/maquinas", gestor, maquinas.createMaquina);
 r.put("/maquinas/:id", gestor, maquinas.updateMaquina);
 r.delete("/maquinas/:id", gestor, maquinas.deleteMaquina);
@@ -56,9 +57,9 @@ r.get("/busca", gestao, painel.busca);
 r.get("/dashboard", gestao, painel.getDashboard);
 r.get("/planta/resumo", gestao, painel.getResumoPlanta);
 
-// Previsão de quebra por regressão linear (só leitura, não altera o banco)
-r.get("/previsao", gestao, previsao.getPrevisoes);
-r.get("/previsao/:id", gestao, previsao.getPrevisao);
+// Ações preditivas (regressão linear sobre as medições)
+r.get("/previsoes", gestao, previsao.getPrevisoes);
+r.post("/previsoes/avaliar", gestor, previsao.postAvaliar);
 
 r.get("/medicoes", gestao, medicoes.getMedicoes);
 r.get("/medicoes/serie", gestao, medicoes.getSerie);

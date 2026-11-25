@@ -10,5 +10,3 @@ export function calcOrcamento(e, corretiva = false) {
   const contingencia = sub * (+e.contingencia || 0) / 100;
   return { mo, pecas, terceiros, parada, contingencia, total: sub + contingencia };
 }
-
-

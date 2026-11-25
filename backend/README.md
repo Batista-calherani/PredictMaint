@@ -30,15 +30,16 @@ Os logins de teste estão em [`../database/README.md`](../database/README.md).
 | GET | `/api/dashboard` | gestão | Indicadores, alertas, saúde e OS |
 | GET | `/api/busca?q=` | gestão | Busca máquinas, OS e alertas |
 | GET | `/api/planta/resumo` | gestão | Contagem de máquinas críticas, em atenção e normais (menu lateral) |
-| GET | `/api/previsao` | gestão | Previsão de quebra de todas as máquinas, da mais próxima para a mais distante (`?setor=`) |
-| GET | `/api/previsao/:codigo` | gestão | Previsão de quebra por regressão linear: data/hora/segundos e detalhe por grandeza (`?pontos=20&horizonte=365`) |
 | GET | `/api/maquinas` | logado | Lista (`?setor=&status=&ordem=saude\|codigo\|setor`) |
 | GET | `/api/maquinas/:codigo` | logado | Detalhe com medições e OS abertas |
 | POST | `/api/maquinas` | gestor | Cadastra (`id`, `nome`, `setor`, `prox`, `custoParada`) |
 | PUT | `/api/maquinas/:codigo` | gestor | Atualiza campos enviados |
 | DELETE | `/api/maquinas/:codigo` | gestor | Desativa (mantém histórico) |
 | GET | `/api/medicoes` · `/api/medicoes/serie` | gestão | Últimas leituras / série do gráfico |
-| POST | `/api/medicoes` | gestão | Registra leitura; acima do limite abre alerta |
+| POST | `/api/medicoes` | gestão | Registra leitura; acima do limite abre alerta; refaz a previsão de falha |
+| GET | `/api/maquinas/:codigo/previsao` | gestão | Previsão de falha de cada grandeza, com os pontos e a reta do gráfico |
+| GET | `/api/previsoes` | gestão | Previsão de todas as máquinas, das mais urgentes para as mais tranquilas |
+| POST | `/api/previsoes/avaliar` | gestor | Recalcula as previsões e os alertas preditivos na hora |
 | GET | `/api/alertas` | logado | Alertas não resolvidos (`?setor=`) |
 | PATCH | `/api/alertas/:id/reconhecer` | gestão | Marca como reconhecido |
 | GET · PUT | `/api/limites` | gestão · gestor | Limites de vibração, temperatura e corrente |
@@ -69,21 +70,22 @@ ainda tem o perfil com que entrou; se perdeu, a sessão cai na hora (401).
 Proteções de usuários: o gestor não consegue desativar a si mesmo, nem tirar o próprio
 perfil de gestor, e o sistema nunca fica sem nenhum gestor ativo. Funcionário precisa de setor.
 
-## Previsão de quebra (regressão linear)
+## Ações preditivas (regressão linear)
 
-Substitui a antiga "Planta ao vivo" (vida útil fixa): agora a vida útil restante é calculada.
-`GET /api/previsao/:codigo` pega as últimas 20 leituras de cada grandeza da máquina e ajusta a reta
-`valor = a + b · dias` pelos mínimos quadrados. O instante em que a reta encosta no **limite crítico**
-da grandeza é a previsão de quebra; vale a grandeza que estoura primeiro.
+A conta fica em `src/lib/regressao.js`; as consultas, os alertas e os avisos em
+`src/controllers/previsaoController.js`.
 
-- `previsao.previsaoISO` / `previsaoTexto`: data e hora prevista (`28/11/2026 14:32:07`, fuso `FUSO_HORARIO`, padrão `America/Sao_Paulo`)
-- `previsao.segundosRestantes` e `restante` (`{ dias, horas, minutos, segundos }`)
-- `previsao.r2`: quanto a reta explica as leituras (0 a 1)
-- `previsao.janela`: faixa provável (inclinação ± 1 erro padrão)
-- `estado`: `ultrapassado`, `iminente`, `previsto`, `fora_do_horizonte`, `sem_tendencia` ou `dados_insuficientes`
+1. Para cada máquina e grandeza, pega as últimas 10 leituras (até 60 dias atrás).
+2. Traça a reta dos mínimos quadrados `valor = a + b × dia`. `b` é quanto o valor sobe por dia e
+   o R² (0 a 1) é a confiança: o quanto as leituras seguem a reta.
+3. A falha prevista é o dia em que a reta cruza o limite crítico da grandeza.
+4. Situação: `critico` (até 7 dias), `atencao` (até 15 dias), `ok` (mais longe), `estavel`
+   (não sobe ou R² abaixo de 0,6), `acima` (já passou do limite) e `insuficiente` (menos de 5 leituras).
+5. Crítico ou atenção abre o alerta **"Falha prevista de …"** com a data e a ação recomendada, e
+   avisa gestores e técnicos no sininho. Se a tendência some, o alerta é resolvido sozinho.
 
-A conta fica em `src/lib/regressao.js` (cópia idêntica em `frontend/src/lib/regressao.jsx`).
-A rota **só lê** o banco: não cria tabela, não grava e não altera nada.
+A previsão é refeita a cada medição registrada e também quando a API liga. As regras
+(quantidade de leituras, R² mínimo, 7 e 15 dias) ficam em `REGRAS`, no começo de `regressao.js`.
 
 ## Atualização automática do banco
 
